@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Thống Kê Server - GirlsBaito.jp (01/04 - 04/05/2026)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #F98800;
+            --primary-light: #ffad42;
+            --secondary: #1e293b;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --border: rgba(249, 136, 0, 0.2);
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        nav#sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(30, 41, 59, 0.95);
+            border-bottom: 2px solid var(--primary);
+            padding: 0.75rem 0;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+        }
+
+        nav#sticky-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav#sticky-nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
+        }
+
+        nav#sticky-nav a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #F98800 0%, #ffad42 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            margin-top: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: "";
+            width: 4px;
+            height: 1.5rem;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .daily-stat-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .date-label {
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .req-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .chart-slot {
+            height: 450px;
+            width: 100%;
+            position: relative;
+        }
+
+        .table-container {
+            width: 100%;
+            max-height: 72vh;
+            overflow: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.35);
+        }
+
+        .stats-toolbar,
+        .details-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.85rem;
+            padding: 0.85rem;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+        }
+
+        .stats-controls,
+        .details-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .stats-field,
+        .details-field {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-dim);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .stats-field input,
+        .stats-field select,
+        .details-field input,
+        .details-field select {
+            min-height: 2.15rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
+            font: inherit;
+            padding: 0.35rem 0.55rem;
+        }
+
+        .stats-field input,
+        .details-field input {
+            width: 9.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stats-pager,
+        .details-pager {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pager-button {
+            min-height: 2.15rem;
+            border: 1px solid rgba(249, 136, 0, 0.35);
+            border-radius: 6px;
+            background: rgba(249, 136, 0, 0.08);
+            color: var(--primary-light);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 0.35rem 0.7rem;
+        }
+
+        .pager-button:hover:not(:disabled) {
+            background: rgba(249, 136, 0, 0.16);
+        }
+
+        .pager-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
+        .details-page-info {
+            min-width: 8rem;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .stats-range,
+        .details-range {
+            color: var(--text-dim);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            min-width: 1180px;
+            table-layout: fixed;
+        }
+
+        th {
+            background: #1e293b;
+            color: var(--primary);
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th:first-child {
+            left: 0;
+            z-index: 12;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-list {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.65rem;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .data-list-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .data-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .data-list.is-collapsed .data-row:nth-child(n + 6) {
+            display: none;
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 1.65rem 4.4rem minmax(0, 1fr);
+            gap: 0.45rem;
+            align-items: center;
+            min-height: 2rem;
+            padding: 0.35rem 0.45rem;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 6px;
+        }
+
+        .rank-badge,
+        .hit-count,
+        .data-value {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.45rem;
+            height: 1.45rem;
+            border-radius: 4px;
+            background: rgba(249, 136, 0, 0.12);
+            color: var(--primary-light);
+            font-size: 0.62rem;
+            font-weight: 700;
+        }
+
+        .hit-count {
+            color: var(--primary-light);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .data-value {
+            min-width: 0;
+            overflow: hidden;
+            color: var(--text-main);
+            font-size: 0.68rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .toggle-list {
+            flex: 0 0 auto;
+            border: 1px solid rgba(249, 136, 0, 0.35);
+            border-radius: 6px;
+            background: rgba(249, 136, 0, 0.08);
+            color: var(--primary-light);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.45rem;
+        }
+
+        .toggle-list:hover {
+            background: rgba(249, 136, 0, 0.16);
+        }
+
+        .empty-data {
+            display: block;
+            padding: 0.4rem;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .date-cell {
+            position: sticky;
+            left: 0;
+            z-index: 6;
+            background: rgba(15, 23, 42, 0.96);
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        .summary-box {
+            border-left: 5px solid var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .proposal-box {
+            border-left: 5px solid var(--primary);
+            background: rgba(249, 136, 0, 0.05);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .stats-toolbar,
+            .details-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav id="sticky-nav">
+        <ul>
+            <li><a href="#traffic-trend">So sánh lưu lượng</a></li>
+            <li><a href="#http-status">Trạng thái HTTP</a></li>
+            <li><a href="#total-req">Số lượt truy cập</a></li>
+            <li><a href="#details">Chi tiết IPs/URLs</a></li>
+            <li><a href="#summary">Tổng kết</a></li>
+            <li><a href="#proposal">Đề xuất</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Server Traffic Analysis - GirlsBaito.jp (01/04 - 04/05/2026)</h1>
+
+        <!-- CHART 1: TOTAL vs BOT -->
+        <h2 id="traffic-trend">1. Biểu đồ so sánh lưu lượng: Tổng vs. Dải IP 74.7.* (Bot)</h2>
+        <div class="glass-card">
+            <div class="chart-slot">
+                <canvas id="trafficChart"></canvas>
+            </div>
+        </div>
+
+        <!-- CHART 2: HTTP STATUS -->
+        <h2 id="http-status">2. Biểu đồ trạng thái HTTP (Http Status Distribution)</h2>
+        <div class="glass-card">
+            <div class="chart-slot">
+                <canvas id="httpChart"></canvas>
+            </div>
+        </div>
+
+        <!-- TOTAL REQUESTS GRID -->
+        <h2 id="total-req">3. Tổng lượt truy cập hàng ngày</h2>
+        <div class="stats-toolbar">
+            <div class="stats-controls">
+                <label class="stats-field">
+                    <span>Ngày/trang</span>
+                    <select id="stats-page-size">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="all">Tất cả</option>
+                    </select>
+                </label>
+                <label class="stats-field">
+                    <span>Lọc ngày</span>
+                    <input id="stats-date-filter" type="search" placeholder="2026_04">
+                </label>
+            </div>
+            <div class="stats-pager">
+                <button id="stats-prev" class="pager-button" type="button">Trước</button>
+                <span id="stats-page-info" class="details-page-info">-</span>
+                <button id="stats-next" class="pager-button" type="button">Sau</button>
+            </div>
+            <div id="stats-range" class="stats-range">-</div>
+        </div>
+        <div class="stats-grid"></div>
+
+        <!-- DETAILS TABLE -->
+        <h2 id="details">4. Chi tiết dữ liệu IPs và URLs</h2>
+        <div class="details-toolbar">
+            <div class="details-controls">
+                <label class="details-field">
+                    <span>Ngày/trang</span>
+                    <select id="details-page-size">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="all">Tất cả</option>
+                    </select>
+                </label>
+                <label class="details-field">
+                    <span>Lọc ngày</span>
+                    <input id="details-date-filter" type="search" placeholder="2026_04_20">
+                </label>
+            </div>
+            <div class="details-pager">
+                <button id="details-prev" class="pager-button" type="button">Trước</button>
+                <span id="details-page-info" class="details-page-info">-</span>
+                <button id="details-next" class="pager-button" type="button">Sau</button>
+            </div>
+            <div id="details-range" class="details-range">-</div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Ngày</th>
+                        <th>Top 20 IPs</th>
+                        <th>Top 20 URLs</th>
+                        <th>Top 20 URLs (IP 74.7.*)</th>
+                    </tr>
+                </thead>
+                <tbody id="data-body"></tbody>
+            </table>
+        </div>
+
+        <!-- SUMMARY -->
+        <h2 id="summary">5. Tổng kết</h2>
+        
+        <div class="glass-card summary-box">
+            <div class="list-item"><span>•</span>
+                <p><strong>Lưu lượng Bot:</strong> Dải IP 74.7.* chiếm tỷ trọng lớn kể từ ngày 08/04, đẩy tổng lượng traffic tăng đột biến. Duy trì ở mức rất cao xuyên suốt đến 04/05, chiếm khoảng <strong>30% - 40%</strong> tổng lượng traffic hàng ngày. Hành vi của bot tập trung cực kỳ rát vào việc cào dữ liệu hình ảnh tĩnh (như <code>/img/admin/stores/...</code>) thay vì duyệt web bình thường.</p>
+            </div>
+            <div class="list-item"><span>•</span>
+                <p><strong>Cảnh báo Server Error (500) & Not Found (404):</strong> Hệ thống ghi nhận tình trạng <strong>Lỗi 500</strong> tăng vọt bất thường vào các ngày 26/04 (1,044 lỗi) và 02/05 (1,190 lỗi). Đồng thời, <strong>Lỗi 404</strong> cũng duy trì ở mức rất cao (khoảng ~1,000 lỗi/ngày) từ 27/04 đến 02/05, cho thấy có broken links bị crawl liên tục hoặc quá tải cục bộ.</p>
+            </div>
+        </div>
+
+        <!-- PROPOSAL -->
+        <h2 id="proposal">6. Đề xuất xử lý</h2>
+        
+        <div class="glass-card proposal-box">
+            <div class="list-item"><span>→</span>
+                <p><strong>Xử lý Bot:</strong> Dải IP <code>74.7.*</code> thuộc về các hạ tầng Cloud hoặc ISP lớn ở Mỹ. Cần xác minh nếu đây không phải là GoogleBot/SEO chính thức, hãy tiến hành <strong>chặn hoàn toàn ở mức Nginx / Cloudflare / WAF</strong> để tiết kiệm gần 40% tài nguyên và băng thông của server.</p>
+            </div>
+            <div class="list-item"><span>→</span>
+                <p><strong>Xử lý Lỗi:</strong> Khẩn trương kiểm tra log ứng dụng (Laravel <code>storage/logs</code>) trong ngày 26/04 và 02/05 để truy vết nguyên nhân lỗi 500. Ngoài ra, rà soát và khắc phục ngay các đường dẫn hình ảnh/file tĩnh bị hỏng (404) đang bị spam request.</p>
+            </div>
+            <div class="list-item"><span>→</span>
+                <p><strong>Bảo vệ Tài Nguyên:</strong> Thiết lập quy tắc <code>Nginx Rate Limiting</code> cụ thể cho các file tĩnh (như .jpg, .css) để tránh tình trạng crawler rút cạn tài nguyên ổ cứng/băng thông. Thiết lập Nginx Rate Limiting ở mức 10req/s cho người dùng thông thường.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const rawData = [
+{ date: "2026_04_01", total: 176160, excl: 176145, ips: "17533 106.72.141.193 | 4951 216.73.216.43 | 4032 126.143.176.130 | 2947 111.217.89.141 | 2565 106.72.96.97 | 2318 222.252.19.49 | 1322 117.5.147.8 | 1262 223.135.202.18 | 894 1.75.84.141 | 801 49.109.22.85 | 783 1.54.214.169 | 769 122.217.187.31 | 731 60.90.201.184 | 651 153.216.80.1 | 648 27.67.129.188 | 571 118.243.95.139 | 568 119.245.73.82 | 562 150.249.202.184 | 559 182.249.47.227 | 490 106.146.16.239", urls: "2118 /public/css/client/app.css | 2096 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 2056 /public/css/client/sugar.css | 2033 /public/css/client/colors.css | 2007 /public/css/client/select.css | 1995 /public/css/client/header.css | 1992 /public/css/client/footer.css | 1980 /img/admin/setting/liver_banner_top_sp_69cbaeb377fbc.png | 1976 /img/admin/setting/liver_banner_top_pc_69cbaeb377f7a.png | 1961 /public/icon/icon_user.svg | 1954 /public/js/tailwind.min.js | 1954 /img/admin/setting/smart_experience_banner_sp_69cbaeb378030.png | 1943 /img/admin/setting/job_test_banner_sp_69cbaeb3780a3.png | 1870 /img/admin/setting/beginner_guide_banner_sp_69cbaeb37848c.png | 1808 /asset/css/style.css | 1799 /asset/js/index.js | 1780 /asset/js/swiper-bundle.min.js | 1753 /asset/js/jquery-3.6.0.min.js | 1737 /asset/css/swiper.min.css | 1638 /public/icon/common/logo_sp.png", ip74urls: "498 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg | 15 /robots.txt | 11 /img/admin/stores/7427/store_fhotos/store_fhoto8_69b8fb25e5faa.jpg | 11 /img/admin/stores/7427/store_fhotos/store_fhoto7_69b8fb25e5bad.jpg | 9 /public/originals/1775036290607574976823820603.jpeg | 9 /public/originals/1775036285607574975800410181.jpeg | 9 /public/originals/1775036280607574976320504097.jpeg | 9 /img/admin/stores/7427/work_uniform_picture/work_uniform_picture_1_6944d3a9a8737.jpg | 9 /img/admin/stores/7427/store_fhotos/store_fhoto9_69b8fb25e62b7.jpg | 9 /img/admin/stores/7427/store_fhotos/store_fhoto10_69b8fb25e6518.jpg" },
+            { date: "2026_04_02", total: 199732, excl: 199718, ips: "19515 106.72.141.193 | 1865 126.143.176.130 | 1772 39.110.206.61 | 1745 59.85.34.187 | 1221 59.132.58.139 | 868 133.106.32.182 | 864 114.19.138.122 | 855 222.252.19.49 | 804 106.72.96.97 | 745 118.109.104.183", urls: "2323 /public/css/client/app.css | 2262 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 2259 /public/css/client/sugar.css | 2252 /public/css/client/header.css | 2250 /public/css/client/select.css", ip74urls: "439 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg | 14 /robots.txt | 14 /img/admin/stores/253/cast_fhotos/cast_fhoto2_6749728b3d21d.jpg" },
+            { date: "2026_04_03", total: 175153, excl: 175139, ips: "15836 106.72.141.193 | 2525 222.252.19.49 | 2429 111.217.89.141 | 1202 60.116.160.87", urls: "2025 /public/css/client/app.css | 1985 /public/css/client/sugar.css | 1984 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png", ip74urls: "375 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_04", total: 128227, excl: 128209, ips: "2162 58.187.17.207 | 1296 1.75.83.195 | 922 133.203.180.32", urls: "1642 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 1614 /public/css/client/app.css", ip74urls: "282 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_05", total: 110280, excl: 110266, ips: "1955 59.132.56.159 | 1231 59.132.57.214", urls: "1417 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 1327 /img/admin/setting/beginner_guide_banner_sp_69cbaeb37848c.png", ip74urls: "307 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_06", total: 183122, excl: 183090, ips: "15833 106.72.141.193 | 5260 222.252.19.49", urls: "2020 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 1922 /public/css/client/app.css", ip74urls: "499 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_07", total: 159448, excl: 159232, ips: "9051 106.72.141.193 | 2006 222.252.19.49", urls: "1791 /public/icon/icon_user.svg | 1643 /public/css/client/app.css", ip74urls: "464 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_08", total: 192013, excl: 148719, ips: "35967 74.7.243.195 | 9500 106.72.141.193", urls: "1681 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 1578 /img/admin/setting/beginner_guide_banner_sp_69cbaeb37848c.png", ip74urls: "376 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_09", total: 253646, excl: 167882, ips: "58749 74.7.243.216 | 22208 74.7.243.195 | 11031 106.72.141.193 | 2196 106.72.96.97 | 1766 222.252.19.49 | 1399 126.8.227.168 | 1200 216.73.216.43 | 1051 133.149.217.148 | 965 125.14.137.58 | 922 119.173.41.243", urls: "1753 /img/admin/setting/line_banner_title_sp_69cbafc29da9a.png | 1663 /public/css/client/select.css | 1653 /public/css/client/app.css | 1648 /public/css/client/footer.css | 1647 /public/icon/icon_user.svg", ip74urls: "236 /public/css/client/single.css | 183 /img/admin/stores/7427/store_fhotos/store_fhoto6_69b8fb25e3be2.jpg" },
+            { date: "2026_04_10", total: 241775, excl: 175435, ips: "48132 74.7.227.18 | 17154 74.7.243.216 | 9236 106.72.141.193 | 1707 106.73.57.38 | 1442 222.252.19.49 | 1109 182.249.28.159 | 883 59.85.34.187 | 828 1.73.144.126 | 769 66.249.79.234 | 761 223.223.66.37", urls: "1881 /public/css/client/header.css | 1873 /public/css/client/select.css | 1869 /public/css/client/colors.css | 1842 /public/css/client/sugar.css | 1790 /public/icon/icon_user.svg", ip74urls: "936 /public/css/client/single.css | 29 /img/admin/stores/253/cast_fhotos/cast_fhoto2_6749728b3d21d.jpg" },
+            { date: "2026_04_11", total: 228363, excl: 162292, ips: "55764 74.7.242.0 | 7638 74.7.227.18 | 4425 42.112.242.143 | 788 175.177.48.31 | 738 106.72.212.129 | 694 59.132.183.32 | 647 171.3.255.225 | 623 60.87.86.165 | 583 60.67.102.208 | 575 126.253.149.154", urls: "2015 /public/icon/icon_user.svg | 1990 /public/css/client/header.css | 1985 /public/css/client/colors.css | 1962 /public/css/client/select.css | 1915 /asset/css/style.css", ip74urls: "803 /public/css/client/single.css | 148 /kanto" },
+            { date: "2026_04_12", total: 178564, excl: 132463, ips: "44481 74.7.242.0 | 1542 74.7.242.29 | 944 36.52.201.170 | 838 220.144.8.237 | 743 136.239.183.45 | 725 153.134.18.4 | 550 60.111.14.128 | 515 133.200.137.193 | 494 126.158.206.191 | 472 126.217.112.189", urls: "1662 /public/css/client/colors.css | 1658 /public/icon/icon_user.svg | 1653 /public/css/client/select.css | 1644 /public/css/client/header.css | 1594 /asset/css/style.css", ip74urls: "735 /public/css/client/single.css | 8 /img/admin/stores/5283/store_fhotos/store_fhoto1_692fe74478caf.jpg" },
+            { date: "2026_04_13", total: 192168, excl: 174785, ips: "13336 74.7.227.160 | 9085 106.72.141.193 | 2319 212.237.121.194 | 1531 222.252.19.49 | 1500 126.143.176.130 | 1158 60.149.150.26 | 1155 153.246.134.90 | 896 39.110.206.61 | 737 106.72.43.32 | 642 125.14.139.140", urls: "1894 /public/css/client/header.css | 1887 /public/css/client/colors.css | 1880 /public/css/client/select.css | 1859 /public/icon/icon_user.svg | 1843 /public/css/client/sugar.css", ip74urls: "816 /public/css/client/single.css | 14 /img/admin/stores/253/cast_fhotos/cast_fhoto2_6749728b3d21d.jpg" },
+            { date: "2026_04_14", total: 255504, excl: 187545, ips: "66503 74.7.227.160 | 5833 106.72.141.193 | 2239 222.252.19.49 | 1910 106.72.96.97 | 1202 114.163.64.139 | 914 220.247.1.199 | 859 106.73.187.33 | 817 117.55.61.193 | 812 27.138.200.156 | 775 61.23.152.139", urls: "2393 /public/icon/icon_user.svg | 2293 /public/css/client/select.css | 2271 /public/css/client/colors.css | 2261 /public/css/client/header.css | 2252 /asset/css/style.css", ip74urls: "866 /public/css/client/single.css | 17 /img/admin/stores/253/cast_fhotos/cast_fhoto2_6749728b3d21d.jpg" },
+            { date: "2026_04_15", total: 328236, excl: 212422, ips: "113075 74.7.227.160 | 7652 106.72.141.193 | 3976 222.252.19.49 | 1423 106.72.96.97 | 1413 153.246.216.165 | 1294 119.173.41.242 | 1013 133.106.150.185 | 819 111.238.160.175 | 782 138.64.103.188 | 759 66.249.64.66", urls: "2693 /public/icon/icon_user.svg | 2457 /public/css/client/select.css | 2457 /public/css/client/app.css | 2450 /public/css/client/header.css | 2433 /public/css/client/colors.css", ip74urls: "851 /public/css/client/single.css | 28 /img/admin/stores/5283/store_fhotos/store_fhoto1_692fe74478caf.jpg" },
+            { date: "2026_04_16", total: 334579, excl: 215231, ips: "55011 74.7.242.54 | 48340 74.7.243.241 | 8387 106.72.141.193 | 7506 74.7.227.160 | 3254 216.73.216.143 | 1208 106.72.96.97 | 1197 222.252.19.49 | 1119 60.149.150.26 | 948 126.114.160.180 | 901 74.7.243.4", urls: "2629 /public/icon/icon_user.svg | 2358 /public/css/client/app.css | 2352 /public/css/client/header.css | 2345 /public/css/client/colors.css | 2339 /public/css/client/select.css", ip74urls: "775 /public/css/client/single.css | 242 /kanto" },
+            { date: "2026_04_17", total: 313237, excl: 240486, ips: "47204 74.7.227.36 | 24789 74.7.243.241 | 8867 106.72.141.193 | 1427 60.149.150.26 | 1413 106.72.96.97 | 952 114.49.31.54 | 933 47.128.30.182 | 863 47.128.30.123 | 810 47.128.30.131 | 774 47.128.30.170", urls: "3910 /public/icon/icon_user.svg | 2970 /public/css/client/colors.css | 2955 /public/css/client/select.css | 2955 /public/css/client/app.css | 2912 /public/css/client/header.css", ip74urls: "564 /public/css/client/single.css | 34 /kanto" },
+            { date: "2026_04_18", total: 353527, excl: 229454, ips: "123005 74.7.227.36 | 1540 47.128.30.187 | 1327 47.128.30.158 | 1247 47.128.30.186 | 1239 47.128.30.177 | 1230 47.128.30.115 | 1200 47.128.30.133 | 1191 47.128.30.109 | 1154 47.128.30.182 | 1150 47.128.30.149", urls: "4694 /public/icon/icon_user.svg | 3205 /public/icon/search_white.svg | 2845 /public/css/client/header.css | 2833 /public/css/client/colors.css | 2826 /public/css/client/select.css", ip74urls: "401 /public/css/client/single.css | 46 /kanto" },
+{
+        "date": "2026_04_19",
+        "total": 314479,
+        "excl": 181152,
+        "ips": "132486 74.7.227.36 | 1158 106.146.238.30 | 1043 52.69.73.50 | 1039 115.165.137.106 | 957 210.194.7.205 | 940 60.88.88.88 | 726 182.21.230.177 | 680 35.73.189.9 | 615 47.128.30.12 | 609 36.52.201.170 | 583 47.128.30.177 | 566 118.238.211.110 | 547 47.128.30.131 | 546 47.128.30.115 | 538 123.225.199.0 | 534 14.8.33.98 | 519 47.128.30.182 | 493 183.86.35.232 | 488 122.26.34.128 | 481 47.128.30.143",
+        "urls": "2691 \/public\/icon\/icon_user.svg | 2185 \/public\/css\/client\/colors.css | 2155 \/public\/css\/client\/app.css | 2127 \/public\/css\/client\/header.css | 2122 \/public\/css\/client\/select.css | 2085 \/asset\/css\/style.css | 2083 \/public\/css\/client\/footer.css | 2051 \/public\/css\/client\/sugar.css | 2042 \/asset\/css\/swiper.min.css | 1905 \/public\/css\/client\/home.css | 1893 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1864 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 1756 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 1730 \/public\/js\/tailwind.min.js | 1721 \/public\/icon\/search_white.svg | 1718 \/public\/css\/store_manager\/pagination.css | 1716 \/asset\/js\/index.js | 1692 \/asset\/js\/jquery-3.6.0.min.js | 1681 \/asset\/js\/swiper-bundle.min.js | 1603 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png",
+        "ip74urls": "320 \/public\/css\/client\/single.css | 52 \/kanto\/archive?search_mode=detail | 15 \/kanto | 15 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 7 \/17497\/single | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 5 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 5 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 5 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 5 \/public\/icon\/arrow_down.svg | 5 \/public\/css\/client\/single\/smart_experience.css | 5 \/public\/css\/client\/ckeditor.css | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=9&s%5B%5D=321&s%5B%5D=1251 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=349&s%5B%5D=729 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=311 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=250 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=1287 | 5 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg"
+    },
+    {
+        "date": "2026_04_20",
+        "total": 345302,
+        "excl": 206858,
+        "ips": "137759 74.7.227.36 | 7578 106.72.141.193 | 1296 39.110.212.167 | 1206 122.255.137.44 | 1107 126.78.82.244 | 1064 133.106.166.102 | 1012 126.216.137.217 | 789 220.26.59.1 | 748 126.143.176.130 | 706 119.244.150.251 | 645 47.128.30.187 | 639 47.128.30.163 | 629 47.128.30.12 | 600 47.128.30.109 | 594 47.128.30.182 | 592 110.130.206.24 | 565 123.225.232.137 | 564 47.128.30.135 | 563 47.128.30.177 | 558 47.128.30.136",
+        "urls": "2835 \/public\/icon\/icon_user.svg | 2297 \/public\/css\/client\/colors.css | 2261 \/public\/css\/client\/footer.css | 2242 \/public\/css\/client\/app.css | 2239 \/public\/css\/client\/header.css | 2235 \/public\/css\/client\/sugar.css | 2211 \/public\/css\/client\/select.css | 2159 \/asset\/css\/style.css | 2109 \/asset\/css\/swiper.min.css | 2062 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2056 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1999 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 1933 \/public\/icon\/search_white.svg | 1931 \/public\/css\/client\/home.css | 1819 \/public\/js\/tailwind.min.js | 1792 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 1766 \/asset\/js\/index.js | 1726 \/asset\/js\/swiper-bundle.min.js | 1723 \/asset\/js\/jquery-3.6.0.min.js | 1689 \/public\/css\/store_manager\/pagination.css",
+        "ip74urls": "496 \/public\/css\/client\/single.css | 80 \/kanto\/archive?search_mode=detail | 33 \/kanto | 16 \/kanto\/archive?search_mode=detail&s%5B%5D=1&s%5B%5D=4&s%5B%5D=6&s%5B%5D=8&s%5B%5D=21&s%5B%5D=36&s%5B%5D=37&s%5B%5D=38&s%5B%5D=515&s%5B%5D=662&s%5B%5D=1276&s%5B%5D=5076&s%5B%5D=5105 | 14 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 12 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 8 \/kanto\/archive?search_mode=detail&s%5B%5D=1701 | 8 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=980 | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=167&s%5B%5D=424 | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=1109 | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=1094 | 6 \/kanto\/archive?search_mode=detail&s%5B%5D=1798 | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=977 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=954 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=912&s%5B%5D=1008"
+    },
+    {
+        "date": "2026_04_21",
+        "total": 401805,
+        "excl": 271421,
+        "ips": "129035 74.7.227.36 | 8870 106.72.141.193 | 1512 133.106.166.102 | 1477 106.72.96.97 | 1402 47.128.30.115 | 1298 111.217.89.141 | 1230 47.128.30.163 | 1161 47.128.30.12 | 1151 47.128.30.131 | 1112 47.128.30.182 | 1104 47.128.30.136 | 1102 47.128.30.162 | 1081 47.128.30.183 | 1059 47.128.30.161 | 1055 47.128.30.123 | 1038 47.128.30.177 | 1009 47.128.30.121 | 1006 47.128.30.171 | 1005 47.128.30.143 | 996 47.128.30.187",
+        "urls": "5034 \/public\/icon\/icon_user.svg | 3418 \/public\/css\/client\/select.css | 3383 \/public\/css\/client\/colors.css | 3379 \/public\/css\/client\/app.css | 3367 \/public\/css\/client\/header.css | 3333 \/public\/icon\/search_white.svg | 3330 \/public\/css\/client\/footer.css | 3292 \/asset\/css\/style.css | 3257 \/public\/css\/client\/sugar.css | 3204 \/asset\/css\/swiper.min.css | 3172 \/public\/icon\/search\/industry_white.svg | 3099 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 3055 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 3018 \/public\/icon\/search\/treatment_white.svg | 2918 \/public\/icon\/search\/station_white.svg | 2882 \/public\/icon\/search\/area_white.svg | 2867 \/public\/icon\/search_list.svg | 2788 \/public\/icon\/heart_title.svg | 2691 \/public\/css\/client\/home.css | 2530 \/public\/css\/store_manager\/pagination.css",
+        "ip74urls": "571 \/public\/css\/client\/single.css | 30 \/kanto\/archive?search_mode=detail | 28 \/kanto | 17 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 13 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 12 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 12 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 12 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 12 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=858&s%5B%5D=863 | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=1248 | 7 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 6 \/public\/originals\/1776669563586330693987467351.jpg | 6 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 6 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 6 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 6 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 6 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 6 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg | 6 \/17497\/single"
+    },
+    {
+        "date": "2026_04_22",
+        "total": 348682,
+        "excl": 212175,
+        "ips": "135953 74.7.227.36 | 11092 106.72.141.193 | 1156 114.177.108.131 | 1028 150.249.202.184 | 925 222.252.19.49 | 832 47.128.30.123 | 812 47.128.30.183 | 789 47.128.30.16 | 776 47.128.30.185 | 775 47.128.30.177 | 758 116.91.76.75 | 754 47.128.30.12 | 752 47.128.30.163 | 748 1.75.73.185 | 722 210.157.194.103 | 718 47.128.30.182 | 715 47.128.30.130 | 708 47.128.30.161 | 688 47.128.30.158 | 681 47.128.30.194",
+        "urls": "3199 \/public\/icon\/icon_user.svg | 2295 \/public\/css\/client\/app.css | 2281 \/public\/css\/client\/sugar.css | 2275 \/public\/css\/client\/footer.css | 2274 \/public\/css\/client\/colors.css | 2264 \/public\/css\/client\/select.css | 2242 \/public\/css\/client\/header.css | 2190 \/asset\/css\/style.css | 2145 \/public\/icon\/search_white.svg | 2140 \/asset\/css\/swiper.min.css | 2107 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2082 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2080 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1989 \/public\/icon\/search\/industry_white.svg | 1960 \/public\/css\/client\/home.css | 1919 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 1870 \/public\/icon\/search\/treatment_white.svg | 1852 \/public\/icon\/heart_title.svg | 1849 \/public\/icon\/search\/station_white.svg | 1830 \/public\/icon\/search_list.svg",
+        "ip74urls": "446 \/public\/css\/client\/single.css | 20 \/kanto\/archive?search_mode=detail | 17 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 12 \/kanto | 12 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 11 \/kanto\/archive?search_mode=detail&a%5B%5D=p0&d_industry%5B%5D=%E3%82%B3%E3%83%B3%E3%82%AB%E3%83%95%E3%82%A7 | 10 \/17497\/single | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 7 \/kanto\/archive?search_mode=detail&a%5B%5D=p0&d_industry%5B%5D=%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9 | 6 \/public\/originals\/1776753875556939063878746725.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=835 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=508&s%5B%5D=5088 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=425 | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=387 | 5 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 5 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg"
+    },
+    {
+        "date": "2026_04_23",
+        "total": 345386,
+        "excl": 207414,
+        "ips": "83193 74.7.243.193 | 40500 74.7.227.36 | 13412 74.7.243.250 | 9596 106.72.141.193 | 1752 106.72.96.97 | 1107 114.177.108.131 | 798 153.246.131.168 | 785 106.176.223.161 | 640 47.128.30.13 | 618 119.243.254.65 | 605 47.128.30.196 | 597 47.128.30.115 | 592 47.128.30.121 | 589 47.128.30.146 | 589 47.128.30.131 | 587 47.128.30.186 | 573 153.139.170.128 | 550 122.221.239.136 | 546 39.110.212.167 | 543 125.192.146.121",
+        "urls": "2985 \/public\/icon\/icon_user.svg | 2246 \/public\/css\/client\/colors.css | 2229 \/public\/css\/client\/footer.css | 2202 \/public\/css\/client\/header.css | 2183 \/public\/css\/client\/app.css | 2171 \/public\/css\/client\/select.css | 2163 \/public\/css\/client\/sugar.css | 2131 \/asset\/css\/style.css | 2096 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2077 \/asset\/css\/swiper.min.css | 2058 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2057 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 1903 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 1868 \/public\/css\/client\/home.css | 1858 \/public\/icon\/search_white.svg | 1773 \/public\/icon\/common\/logo_sp.png | 1762 \/public\/css\/store_manager\/pagination.css | 1723 \/public\/js\/tailwind.min.js | 1675 \/asset\/js\/swiper-bundle.min.js | 1673 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png",
+        "ip74urls": "463 \/public\/css\/client\/single.css | 37 \/kanto\/archive?search_mode=detail | 18 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 13 \/kanto | 10 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 9 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 8 \/kanto\/archive?search_mode=detail&s%5B%5D=143&s%5B%5D=224&s%5B%5D=1215 | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=397&s%5B%5D=5108 | 7 \/kanto\/archive?search_mode=detail&s%5B%5D=1050 | 7 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg | 7 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 7 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 7 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg | 7 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto10_69b8fb25e6518.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 6 \/public\/originals\/1776943860556939063878746725.jpg | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg"
+    },
+    {
+        "date": "2026_04_24",
+        "total": 316263,
+        "excl": 205368,
+        "ips": "88128 74.7.242.62 | 8988 74.7.227.12 | 7540 106.72.141.193 | 4645 74.7.243.193 | 4145 74.7.242.1 | 1651 74.7.241.51 | 1396 222.252.19.49 | 1358 74.7.227.16 | 1061 74.7.241.32 | 1037 60.102.186.9 | 985 106.72.96.97 | 761 1.73.145.239 | 752 133.106.32.233 | 736 217.178.61.62 | 728 47.128.30.163 | 711 47.128.30.130 | 693 60.73.29.206 | 692 47.128.30.161 | 687 47.128.30.115 | 685 47.128.30.18",
+        "urls": "3135 \/public\/icon\/icon_user.svg | 2288 \/public\/css\/client\/colors.css | 2284 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2269 \/public\/css\/client\/header.css | 2266 \/public\/css\/client\/footer.css | 2257 \/public\/css\/client\/app.css | 2219 \/public\/css\/client\/select.css | 2201 \/public\/css\/client\/sugar.css | 2181 \/asset\/css\/style.css | 2111 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2097 \/asset\/css\/swiper.min.css | 2095 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2080 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1928 \/public\/css\/client\/home.css | 1868 \/public\/icon\/common\/logo_sp.png | 1826 \/public\/icon\/search_white.svg | 1786 \/public\/css\/store_manager\/pagination.css | 1735 \/img\/admin\/setting\/job_test_banner_sp_69cbaeb3780a3.png | 1729 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png | 1728 \/asset\/js\/index.js",
+        "ip74urls": "218 \/public\/css\/client\/single.css | 15 \/kanto\/archive?search_mode=detail | 11 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 10 \/kanto\/archive?search_mode=detail&s%5B%5D=1195 | 7 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 7 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 6 \/robots.txt | 6 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 6 \/public\/js\/client\/format_select_date.js | 6 \/public\/css\/auth\/login.css | 6 \/kanto\/archive?search_mode=detail&a%5B%5D=p3 | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 6 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 6 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 6 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg | 6 \/17497\/single"
+    },
+    {
+        "date": "2026_04_25",
+        "total": 346009,
+        "excl": 224401,
+        "ips": "120682 74.7.242.62 | 1060 47.128.30.115 | 1046 47.128.30.18 | 1010 47.128.30.163 | 976 47.128.30.196 | 964 47.128.30.141 | 948 47.128.30.183 | 940 47.128.30.12 | 930 47.128.30.192 | 911 47.128.30.148 | 899 47.128.30.187 | 896 47.128.30.123 | 891 47.128.30.177 | 888 47.128.30.194 | 888 47.128.30.182 | 885 126.216.210.14 | 874 47.128.30.195 | 865 47.128.30.19 | 856 47.128.30.110 | 854 47.128.30.13",
+        "urls": "4296 \/public\/icon\/icon_user.svg | 2754 \/public\/css\/client\/colors.css | 2732 \/public\/css\/client\/footer.css | 2692 \/public\/css\/client\/select.css | 2656 \/public\/css\/client\/app.css | 2635 \/asset\/css\/style.css | 2630 \/public\/css\/client\/header.css | 2617 \/public\/css\/client\/sugar.css | 2602 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2585 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2578 \/asset\/css\/swiper.min.css | 2541 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2318 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2288 \/public\/icon\/common\/logo_sp.png | 2267 \/public\/css\/client\/home.css | 2260 \/public\/icon\/search_white.svg | 2194 \/public\/css\/store_manager\/pagination.css | 2141 \/img\/admin\/setting\/job_test_banner_sp_69cbaeb3780a3.png | 2138 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png | 2053 \/public\/icon\/search\/station_white.svg",
+        "ip74urls": "19 \/kanto\/archive?search_mode=detail | 18 \/kanto | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 7 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 7 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 7 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg | 6 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 6 \/kanto\/archive?search_mode=detail&a%5B%5D=12&d_industry%5B%5D=%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9 | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 6 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 6 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 6 \/17497\/single | 5 \/robots.txt | 5 \/public\/js\/client\/single.js | 5 \/public\/icon\/arrow_white.svg | 5 \/public\/icon\/arrow_down.svg | 5 \/public\/css\/client\/footer.css"
+    },
+    {
+        "date": "2026_04_26",
+        "total": 336216,
+        "excl": 218950,
+        "ips": "116530 74.7.242.62 | 2223 219.104.136.188 | 1488 153.134.5.133 | 1217 172.225.46.89 | 1031 211.2.61.207 | 867 59.132.71.132 | 840 106.146.13.212 | 780 47.128.30.186 | 773 47.128.30.158 | 764 47.128.30.187 | 764 47.128.30.163 | 731 47.128.30.161 | 726 47.128.30.12 | 720 47.128.30.183 | 720 119.243.254.65 | 717 125.195.20.96 | 716 47.128.30.177 | 686 47.128.30.123 | 685 47.128.30.131 | 654 47.128.30.141",
+        "urls": "3742 \/public\/icon\/icon_user.svg | 2680 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2676 \/public\/css\/client\/sugar.css | 2643 \/public\/css\/client\/colors.css | 2628 \/public\/css\/client\/footer.css | 2605 \/public\/css\/client\/header.css | 2602 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2589 \/public\/css\/client\/select.css | 2574 \/public\/css\/client\/app.css | 2554 \/asset\/css\/style.css | 2481 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2446 \/asset\/css\/swiper.min.css | 2431 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2303 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png | 2292 \/img\/admin\/setting\/job_test_banner_sp_69cbaeb3780a3.png | 2275 \/public\/icon\/common\/logo_sp.png | 2221 \/public\/css\/client\/home.css | 2161 \/public\/css\/store_manager\/pagination.css | 2003 \/asset\/js\/index.js | 1992 \/asset\/js\/swiper-bundle.min.js",
+        "ip74urls": "20 \/kanto\/archive?search_mode=detail | 17 \/17497\/single | 16 \/kanto | 13 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 13 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 12 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 11 \/public\/img\/common\/logo_sp.png | 11 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 11 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 11 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg | 11 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 10 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 10 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 8 \/img\/common\/logo_sugar.png | 8 \/img\/admin\/stores\/7925\/store_fhotos\/store_fhoto1_69c6664003626.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 8 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 8 \/img\/admin\/setting\/suger_2_68e8cf11c1274.jpg | 8 \/img\/admin\/setting\/suger_1_68e8cf11c0fef.jpg"
+    },
+    {
+        "date": "2026_04_27",
+        "total": 357498,
+        "excl": 230633,
+        "ips": "126772 74.7.242.62 | 9224 106.72.141.193 | 1018 114.159.219.225 | 831 1.75.91.84 | 775 47.128.30.161 | 756 126.143.176.130 | 746 210.157.194.9 | 743 47.128.30.123 | 695 210.146.71.126 | 693 210.157.193.41 | 687 47.128.30.121 | 683 47.128.30.182 | 657 59.132.71.132 | 651 47.128.30.156 | 647 47.128.30.136 | 646 114.48.188.204 | 642 221.71.153.250 | 638 1.115.70.121 | 633 47.128.30.163 | 631 47.128.30.18",
+        "urls": "3366 \/public\/icon\/icon_user.svg | 2578 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2540 \/public\/css\/client\/header.css | 2530 \/public\/css\/client\/app.css | 2527 \/public\/css\/client\/footer.css | 2518 \/public\/css\/client\/colors.css | 2515 \/public\/css\/client\/select.css | 2496 \/public\/css\/client\/sugar.css | 2484 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2437 \/asset\/css\/style.css | 2423 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2376 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2364 \/asset\/css\/swiper.min.css | 2194 \/public\/icon\/common\/logo_sp.png | 2088 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png | 2086 \/public\/js\/tailwind.min.js | 2067 \/public\/css\/store_manager\/pagination.css | 2056 \/public\/css\/client\/home.css | 2043 \/img\/admin\/setting\/job_test_banner_sp_69cbaeb3780a3.png | 2022 \/asset\/js\/swiper-bundle.min.js",
+        "ip74urls": "22 \/kanto\/archive?search_mode=detail&a%5B%5D=p0 | 17 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 12 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 10 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 10 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 9 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 9 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 9 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 9 \/17497\/single | 8 \/kanto\/archive?search_mode=detail | 7 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 6 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto10_69b8fb25e6518.jpg | 6 \/img\/admin\/stores\/6925\/work_uniform_picture\/work_uniform_picture_2_6749733798e08.jpg | 6 \/img\/admin\/stores\/6925\/work_uniform_picture\/work_uniform_picture_1_6749733798ad7.jpg | 6 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg"
+    },
+    {
+        "date": "2026_04_28",
+        "total": 374701,
+        "excl": 263375,
+        "ips": "110122 74.7.242.62 | 8635 106.72.141.193 | 1626 47.128.30.149 | 1501 47.128.30.187 | 1459 47.128.30.143 | 1458 47.128.30.186 | 1391 47.128.30.168 | 1385 47.128.30.133 | 1371 47.128.30.158 | 1369 47.128.30.185 | 1354 47.128.30.115 | 1350 47.128.30.163 | 1321 47.128.30.132 | 1265 47.128.30.144 | 1259 47.128.30.177 | 1212 47.128.30.109 | 1207 47.128.30.150 | 1180 47.128.30.12 | 1150 47.128.30.141 | 1150 47.128.30.131",
+        "urls": "4941 \/public\/icon\/icon_user.svg | 3197 \/public\/icon\/search_white.svg | 2976 \/public\/css\/client\/app.css | 2962 \/public\/css\/client\/colors.css | 2947 \/public\/css\/client\/header.css | 2939 \/public\/css\/client\/select.css | 2922 \/public\/css\/client\/footer.css | 2905 \/public\/css\/client\/sugar.css | 2876 \/asset\/css\/style.css | 2786 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2774 \/asset\/css\/swiper.min.css | 2747 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2725 \/public\/icon\/search\/treatment_white.svg | 2714 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2686 \/public\/icon\/search_list.svg | 2654 \/public\/icon\/search\/station_white.svg | 2652 \/public\/icon\/search\/area_white.svg | 2642 \/public\/icon\/search\/industry_white.svg | 2639 \/public\/icon\/heart_title.svg | 2552 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png",
+        "ip74urls": "12 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 11 \/public\/originals\/1776943860556939063878746725.jpg | 11 \/kanto\/archive?search_mode=detail&a%5B%5D=p0&d_industry%5B%5D=%E3%82%B3%E3%83%B3%E3%82%AB%E3%83%95%E3%82%A7 | 11 \/kanto | 8 \/kanto\/archive?search_mode=detail&a%5B%5D=p1 | 8 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 7 \/kanto\/verify-confirm?tel=07074875303 | 7 \/kanto\/archive?search_mode=detail&a%5B%5D=75&d_industry%5B%5D=%E3%82%AC%E3%83%BC%E3%83%AB%E3%82%BA%E3%83%90%E3%83%BC | 7 \/img\/admin\/tgb\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/tgb_news_thmbnail_6879f44c97467.png | 6 \/robots.txt | 6 \/public\/originals\/1776670146%E6%AD%A6%E8%94%B5%E5%B0%8F%E6%9D%89%E8%90%8C_01%20(1)%20(1).jpg | 6 \/kanto\/archive?search_mode=detail&a%5B%5D=58&d_industry%5B%5D=%E3%82%AC%E3%83%BC%E3%83%AB%E3%82%BA%E3%83%90%E3%83%BC | 6 \/17497\/single | 5 \/kanto\/archive?search_mode=detail&s%5B%5D=941 | 5 \/kanto\/archive?search_mode=detail&a%5B%5D=p0 | 5 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 5 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg | 5 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 5 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 5 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg"
+    },
+    {
+        "date": "2026_04_29",
+        "total": 372652,
+        "excl": 230638,
+        "ips": "136244 74.7.227.190 | 2062 74.7.242.62 | 1352 47.128.30.115 | 1305 47.128.30.183 | 1234 47.128.30.163 | 1206 47.128.30.187 | 1169 47.128.30.131 | 1096 47.128.30.177 | 1065 47.128.30.123 | 1038 47.128.30.164 | 1034 47.128.30.12 | 1031 47.128.30.19 | 1029 111.237.88.13 | 1027 47.128.30.148 | 1022 47.128.30.182 | 1020 47.128.30.144 | 991 47.128.30.158 | 984 47.128.30.132 | 969 47.128.30.161 | 961 47.128.30.109",
+        "urls": "4378 \/public\/icon\/icon_user.svg | 3026 \/public\/icon\/search_white.svg | 2643 \/public\/css\/client\/colors.css | 2617 \/public\/css\/client\/footer.css | 2615 \/public\/css\/client\/header.css | 2592 \/asset\/css\/style.css | 2590 \/public\/css\/client\/app.css | 2585 \/public\/css\/client\/select.css | 2534 \/public\/css\/client\/sugar.css | 2516 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2441 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2423 \/asset\/css\/swiper.min.css | 2417 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2181 \/public\/icon\/search\/treatment_white.svg | 2169 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2149 \/public\/css\/client\/home.css | 2108 \/public\/icon\/search\/station_white.svg | 2092 \/public\/icon\/search\/industry_white.svg | 2064 \/public\/icon\/search\/area_white.svg | 2059 \/public\/icon\/search_list.svg",
+        "ip74urls": "266 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 19 \/kanto | 11 \/17497\/single | 10 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 10 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 9 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 9 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 9 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 9 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg | 8 \/img\/admin\/stores\/7688\/store_fhotos\/store_fhoto3_69b2514d415fc.jpg | 7 \/public\/js\/client\/format_select_date.js | 7 \/public\/icon\/arrow_down.svg | 6 \/public\/css\/client\/single\/application.css | 6 \/public\/css\/client\/single.css | 6 \/public\/css\/client\/mypage.css | 6 \/public\/css\/client\/ckeditor.css | 6 \/public\/css\/auth\/login.css | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 6 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 6 \/img\/admin\/setting\/tgb_exclusive_benefit_sp_69cbb18a37e68.png"
+    },
+    {
+        "date": "2026_04_30",
+        "total": 341324,
+        "excl": 206353,
+        "ips": "134383 74.7.227.190 | 7103 106.72.141.193 | 983 61.23.152.41 | 893 47.128.30.115 | 812 49.109.156.109 | 786 47.128.30.186 | 726 47.128.30.183 | 714 47.128.30.143 | 683 47.128.30.12 | 678 47.128.30.162 | 671 49.97.71.205 | 667 210.146.71.126 | 664 47.128.30.146 | 663 47.128.30.193 | 655 47.128.30.123 | 651 47.128.30.124 | 644 47.128.30.187 | 619 180.28.79.125 | 611 47.128.30.177 | 606 47.128.30.163",
+        "urls": "3232 \/public\/icon\/icon_user.svg | 2274 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2231 \/public\/css\/client\/colors.css | 2208 \/public\/css\/client\/footer.css | 2183 \/public\/css\/client\/app.css | 2176 \/public\/css\/client\/select.css | 2158 \/public\/css\/client\/header.css | 2121 \/public\/css\/client\/sugar.css | 2089 \/asset\/css\/style.css | 2078 \/public\/icon\/search_white.svg | 2048 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2031 \/asset\/css\/swiper.min.css | 2015 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2010 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1716 \/public\/icon\/common\/logo_sp.png | 1698 \/public\/css\/client\/home.css | 1567 \/asset\/js\/index.js | 1563 \/asset\/js\/swiper-bundle.min.js | 1555 \/public\/js\/tailwind.min.js | 1545 \/kanto\/pre-search-count",
+        "ip74urls": "241 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 16 \/img\/admin\/stores\/6377\/store_fhotos\/store_fhoto4_66137427adf8a.jpg | 14 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 12 \/public\/originals\/1776669563586330693987467351.jpg | 5 \/public\/originals\/1775227938607574976823820603.jpeg | 5 \/public\/originals\/1775227930607574976320504097.jpeg | 5 \/public\/originals\/1775227897607574975800410181.jpeg | 5 \/img\/admin\/tgb\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/tgb_news_thmbnail_6879f44c97467.png | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 4 \/kanto\/detail-search | 4 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 4 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto10_69b8fb25e6518.jpg | 3 \/robots.txt | 3 \/public\/originals\/1777540446611774870086746504.jpeg | 3 \/public\/originals\/1776943860556939063878746725.jpg | 3 \/public\/originals\/1776670146%E6%AD%A6%E8%94%B5%E5%B0%8F%E6%9D%89%E8%90%8C_01%20(1)%20(1).jpg"
+    },
+    {
+        "date": "2026_05_01",
+        "total": 360559,
+        "excl": 221001,
+        "ips": "138683 74.7.227.190 | 5573 106.72.141.193 | 1606 113.147.228.65 | 1089 59.128.12.250 | 1070 118.243.95.139 | 746 14.8.45.33 | 731 126.143.176.130 | 726 223.135.202.18 | 715 182.249.36.59 | 702 106.73.11.160 | 695 60.103.219.137 | 655 47.128.30.115 | 641 47.128.30.186 | 620 126.153.27.104 | 563 106.72.96.97 | 561 47.128.30.193 | 561 47.128.30.131 | 553 47.128.30.150 | 551 47.128.30.12 | 543 219.104.137.64",
+        "urls": "3138 \/public\/icon\/icon_user.svg | 2431 \/public\/css\/client\/footer.css | 2398 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2390 \/public\/css\/client\/colors.css | 2355 \/public\/css\/client\/header.css | 2347 \/public\/css\/client\/app.css | 2327 \/public\/css\/client\/select.css | 2320 \/public\/css\/client\/sugar.css | 2269 \/asset\/css\/style.css | 2201 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2193 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 2178 \/asset\/css\/swiper.min.css | 2150 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1899 \/public\/js\/tailwind.min.js | 1891 \/public\/icon\/common\/logo_sp.png | 1869 \/asset\/js\/swiper-bundle.min.js | 1868 \/asset\/js\/index.js | 1859 \/asset\/js\/jquery-3.6.0.min.js | 1757 \/public\/css\/client\/home.css | 1688 \/public\/css\/store_manager\/pagination.css",
+        "ip74urls": "222 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 70 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 18 \/kanto | 14 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 13 \/public\/originals\/1776669563586330693987467351.jpg | 12 \/public\/originals\/17776292741777623621hfjshjjhsjfj.jpg | 8 \/public\/originals\/1776943860556939063878746725.jpg | 7 \/public\/originals\/1775227938607574976823820603.jpeg | 7 \/public\/originals\/1775227930607574976320504097.jpeg | 7 \/public\/originals\/1775227897607574975800410181.jpeg | 6 \/img\/admin\/tgb\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/tgb_news_thmbnail_6879f44c97467.png | 6 \/img\/admin\/stores\/6769\/store_fhotos\/store_fhoto4_670673f117427.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 5 \/kanto\/archive?search_mode=detail&a%5B%5D=73 | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 4 \/robots.txt | 4 \/public\/originals\/1776670146%E6%AD%A6%E8%94%B5%E5%B0%8F%E6%9D%89%E8%90%8C_01%20(1)%20(1).jpg | 4 \/public\/originals\/1776422451store_fhoto5_67400db780acc.jpg"
+    },
+    {
+        "date": "2026_05_02",
+        "total": 343947,
+        "excl": 201734,
+        "ips": "141355 74.7.227.190 | 2036 217.178.143.37 | 1949 121.109.142.100 | 1315 159.28.144.175 | 874 125.14.67.101 | 859 14.8.24.128 | 731 47.128.30.163 | 726 61.21.199.99 | 700 47.128.30.121 | 693 210.157.192.203 | 692 113.147.159.186 | 680 49.109.160.126 | 678 47.128.30.162 | 672 47.128.30.183 | 664 47.128.30.164 | 654 47.128.30.158 | 653 122.135.56.50 | 638 47.128.30.117 | 637 47.128.30.192 | 635 47.128.30.115",
+        "urls": "3167 \/public\/icon\/icon_user.svg | 2278 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 2257 \/public\/css\/client\/footer.css | 2211 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 2194 \/public\/css\/client\/select.css | 2167 \/public\/css\/client\/header.css | 2165 \/public\/css\/client\/colors.css | 2150 \/public\/css\/client\/app.css | 2115 \/asset\/css\/style.css | 2109 \/public\/css\/client\/sugar.css | 2056 \/asset\/css\/swiper.min.css | 2054 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 2038 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 1928 \/public\/icon\/common\/logo_sp.png | 1725 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png | 1697 \/public\/css\/client\/home.css | 1685 \/img\/admin\/setting\/job_test_banner_sp_69cbaeb3780a3.png | 1662 \/public\/css\/store_manager\/pagination.css | 1619 \/asset\/js\/index.js | 1587 \/asset\/js\/swiper-bundle.min.js",
+        "ip74urls": "130 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 126 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 18 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 13 \/kanto | 9 \/17497\/single | 6 \/robots.txt | 6 \/public\/originals\/1776669563586330693987467351.jpg | 6 \/kanto\/archive?search_mode=detail&a%5B%5D=68&d_industry%5B%5D=%E3%82%AC%E3%83%BC%E3%83%AB%E3%82%BA%E3%83%90%E3%83%BC | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto10_69b8fb25e6518.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 5 \/kanto\/register?tel=08081472767 | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 4 \/public\/originals\/17776292741777623621hfjshjjhsjfj.jpg"
+    },
+    {
+        "date": "2026_05_03",
+        "total": 188233,
+        "excl": 164069,
+        "ips": "23049 74.7.227.190 | 749 150.31.251.222 | 646 136.239.183.95 | 583 133.200.145.224 | 558 47.128.30.115 | 550 119.105.89.176 | 544 59.138.96.97 | 520 47.128.30.168 | 519 106.72.132.64 | 517 47.128.30.150 | 516 47.128.30.161 | 511 47.128.30.123 | 504 103.252.33.122 | 503 182.249.37.31 | 502 219.62.14.64 | 496 114.183.242.108 | 488 47.128.30.196 | 488 47.128.30.182 | 482 47.128.30.145 | 480 47.128.30.188",
+        "urls": "2460 \/public\/icon\/icon_user.svg | 1933 \/public\/css\/client\/footer.css | 1929 \/public\/css\/client\/colors.css | 1909 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 1870 \/public\/css\/client\/sugar.css | 1853 \/public\/css\/client\/header.css | 1842 \/public\/css\/client\/app.css | 1841 \/public\/css\/client\/select.css | 1832 \/asset\/css\/style.css | 1822 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 1748 \/asset\/css\/swiper.min.css | 1731 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1731 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 1697 \/public\/icon\/common\/logo_sp.png | 1568 \/public\/js\/tailwind.min.js | 1531 \/asset\/js\/index.js | 1523 \/asset\/js\/swiper-bundle.min.js | 1519 \/asset\/js\/jquery-3.6.0.min.js | 1501 \/img\/admin\/setting\/smart_experience_banner_sp_69cbaeb378030.png | 1477 \/img\/admin\/setting\/job_test_banner_sp_69cbaeb3780a3.png",
+        "ip74urls": "103 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 100 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 15 \/kanto | 14 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 8 \/img\/admin\/tgb\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/tgb_news_thmbnail_6879f44c97467.png | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 5 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg | 4 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 4 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 4 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg | 4 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto10_69b8fb25e6518.jpg | 4 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 4 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 4 \/17497\/single | 3 \/public\/originals\/1776669563586330693987467351.jpg"
+    },
+    {
+        "date": "2026_05_04",
+        "total": 159089,
+        "excl": 154630,
+        "ips": "3882 74.7.227.190 | 3688 222.252.19.49 | 1410 221.113.104.241 | 1152 1.75.232.215 | 778 210.174.60.163 | 682 219.104.134.4 | 615 217.178.143.37 | 578 153.243.125.144 | 563 49.109.0.18 | 541 217.178.53.9 | 519 153.242.108.2 | 494 60.126.55.251 | 489 125.14.138.38 | 460 104.28.99.195 | 457 119.171.160.208 | 457 118.106.134.236 | 421 36.241.12.235 | 417 118.240.110.126 | 416 121.2.64.175 | 413 126.143.40.58",
+        "urls": "1919 \/public\/icon\/icon_user.svg | 1795 \/img\/admin\/setting\/line_banner_title_sp_69cbafc29da9a.png | 1727 \/public\/css\/client\/footer.css | 1719 \/public\/css\/client\/colors.css | 1683 \/public\/css\/client\/header.css | 1672 \/public\/css\/client\/select.css | 1657 \/public\/css\/client\/sugar.css | 1646 \/img\/admin\/setting\/beginner_guide_banner_sp_69cbaeb37848c.png | 1639 \/public\/css\/client\/app.css | 1635 \/asset\/css\/style.css | 1607 \/asset\/css\/swiper.min.css | 1555 \/img\/admin\/setting\/liver_banner_top_pc_69cbaeb377f7a.png | 1528 \/img\/admin\/setting\/liver_banner_top_sp_69cbaeb377fbc.png | 1506 \/asset\/js\/index.js | 1484 \/public\/icon\/common\/logo_sp.png | 1482 \/asset\/js\/swiper-bundle.min.js | 1464 \/public\/js\/tailwind.min.js | 1438 \/asset\/js\/jquery-3.6.0.min.js | 1309 \/public\/css\/client\/home.css | 1304 \/kanto\/pre-search-count",
+        "ip74urls": "154 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto1_692fe74478caf.jpg | 133 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto6_69b8fb25e3be2.jpg | 16 \/img\/admin\/stores\/253\/cast_fhotos\/cast_fhoto2_6749728b3d21d.jpg | 8 \/17497\/single | 7 \/public\/originals\/1775126646cast_fhoto2_65c1c48c421ee.jpg | 7 \/public\/originals\/1775126644cast_fhoto3_65c1c48c424ac.jpg | 7 \/public\/originals\/1775126642cast_fhoto1_65c1c48c41958.jpg | 7 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto4_692fe7447a6bf.jpg | 7 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_2_6735644c99f03.jpg | 7 \/img\/admin\/stores\/5235\/work_uniform_picture\/work_uniform_picture_1_6735644c99ca2.jpg | 7 \/img\/admin\/stores\/5235\/store_fhotos\/store_fhoto5_68e751e5ee45d.jpg | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_2_68529eeee48f3.jpg | 6 \/img\/admin\/stores\/7427\/work_uniform_picture\/work_uniform_picture_1_6944d3a9a8737.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto9_69b8fb25e62b7.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto8_69b8fb25e5faa.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto7_69b8fb25e5bad.jpg | 6 \/img\/admin\/stores\/7427\/store_fhotos\/store_fhoto10_69b8fb25e6518.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto6_692fe7447aca5.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto5_692fe7447a9ba.jpg | 6 \/img\/admin\/stores\/5283\/store_fhotos\/store_fhoto2_692fe74479fd6.jpg"
+    }
+];
+
+        const httpData = [
+{ date: "2026_04_01", c200: 165154, c206: 2840, c304: 4039, c404: 117, c500: 124 },
+            { date: "2026_04_02", c200: 182259, c206: 3904, c304: 8013, c404: 52, c500: 254 },
+            { date: "2026_04_03", c200: 155209, c206: 4717, c304: 9822, c404: 43, c500: 253 },
+            { date: "2026_04_04", c200: 113476, c206: 5748, c304: 5167, c404: 82, c500: 499 },
+            { date: "2026_04_05", c200: 95097, c206: 7016, c304: 4754, c404: 160, c500: 448 },
+            { date: "2026_04_06", c200: 161552, c206: 7171, c304: 9735, c404: 150, c500: 419 },
+            { date: "2026_04_07", c200: 128543, c206: 14975, c304: 11582, c404: 89, c500: 391 },
+            { date: "2026_04_08", c200: 161693, c206: 7074, c304: 7687, c404: 6014, c500: 441 },
+            { date: "2026_04_09", c200: 227369, c206: 7640, c304: 10065, c404: 1836, c500: 612 },
+            { date: "2026_04_10", c200: 220397, c206: 7681, c304: 8239, c404: 451, c500: 277 },
+            { date: "2026_04_11", c200: 205507, c206: 10403, c304: 6613, c404: 2329, c500: 135 },
+            { date: "2026_04_12", c200: 160552, c206: 9776, c304: 5785, c404: 112, c500: 41 },
+            { date: "2026_04_13", c200: 166296, c206: 10615, c304: 10694, c404: 622, c500: 327 },
+            { date: "2026_04_14", c200: 234165, c206: 9932, c304: 7350, c404: 246, c500: 76 },
+            { date: "2026_04_15", c200: 297672, c206: 15402, c304: 11314, c404: 322, c500: 98 },
+            { date: "2026_04_16", c200: 301348, c206: 14907, c304: 9691, c404: 209, c500: 147 },
+            { date: "2026_04_17", c200: 262318, c206: 31518, c304: 16177, c404: 249, c500: 241 },
+            { date: "2026_04_18", c200: 280479, c206: 52036, c304: 18838, c404: 168, c500: 63 },
+{
+        "date": "2026_04_19",
+        "c200": 281825,
+        "c206": 20988,
+        "c304": 9450,
+        "c404": 213,
+        "c500": 84
+    },
+    {
+        "date": "2026_04_20",
+        "c200": 303863,
+        "c206": 24177,
+        "c304": 14130,
+        "c404": 272,
+        "c500": 77
+    },
+    {
+        "date": "2026_04_21",
+        "c200": 329060,
+        "c206": 48556,
+        "c304": 20763,
+        "c404": 302,
+        "c500": 65
+    },
+    {
+        "date": "2026_04_22",
+        "c200": 297188,
+        "c206": 32975,
+        "c304": 15245,
+        "c404": 243,
+        "c500": 65
+    },
+    {
+        "date": "2026_04_23",
+        "c200": 303261,
+        "c206": 25054,
+        "c304": 14014,
+        "c404": 244,
+        "c500": 41
+    },
+    {
+        "date": "2026_04_24",
+        "c200": 269399,
+        "c206": 29602,
+        "c304": 14725,
+        "c404": 256,
+        "c500": 45
+    },
+    {
+        "date": "2026_04_25",
+        "c200": 277172,
+        "c206": 47538,
+        "c304": 17649,
+        "c404": 625,
+        "c500": 766
+    },
+    {
+        "date": "2026_04_26",
+        "c200": 285961,
+        "c206": 32615,
+        "c304": 13084,
+        "c404": 743,
+        "c500": 1044
+    },
+    {
+        "date": "2026_04_27",
+        "c200": 311724,
+        "c206": 27065,
+        "c304": 15021,
+        "c404": 1030,
+        "c500": 39
+    },
+    {
+        "date": "2026_04_28",
+        "c200": 288693,
+        "c206": 59572,
+        "c304": 23042,
+        "c404": 693,
+        "c500": 22
+    },
+    {
+        "date": "2026_04_29",
+        "c200": 300935,
+        "c206": 51485,
+        "c304": 17779,
+        "c404": 687,
+        "c500": 32
+    },
+    {
+        "date": "2026_04_30",
+        "c200": 293355,
+        "c206": 31176,
+        "c304": 13760,
+        "c404": 707,
+        "c500": 26
+    },
+    {
+        "date": "2026_05_01",
+        "c200": 319320,
+        "c206": 24909,
+        "c304": 11925,
+        "c404": 1113,
+        "c500": 545
+    },
+    {
+        "date": "2026_05_02",
+        "c200": 293417,
+        "c206": 32701,
+        "c304": 12074,
+        "c404": 1023,
+        "c500": 1190
+    },
+    {
+        "date": "2026_05_03",
+        "c200": 155796,
+        "c206": 21877,
+        "c304": 8986,
+        "c404": 299,
+        "c500": 25
+    },
+    {
+        "date": "2026_05_04",
+        "c200": 138769,
+        "c206": 11292,
+        "c304": 6010,
+        "c404": 339,
+        "c500": 661
+    }
+];
+
+        const chartLabels = rawData.map(d => d.date.split('_').slice(1).join('/'));
+
+        // Chart 1: Total vs Bot (Stacked Bar Chart for clear visualization)
+        const botTraffic = rawData.map(d => d.total - d.excl);
+        const realTraffic = rawData.map(d => d.excl);
+
+        new Chart(document.getElementById('trafficChart'), {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Lưu lượng sạch (Excl. 74.7.*)',
+                        data: realTraffic,
+                        backgroundColor: '#10b981',
+                        borderWidth: 0
+                    },
+                    {
+                        label: 'Lưu lượng Bot (IP 74.7.*)',
+                        data: botTraffic,
+                        backgroundColor: '#ef4444',
+                        borderWidth: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#f1f5f9' } },
+                    tooltip: {
+                        callbacks: {
+                            footer: (tooltipItems) => {
+                                let sum = 0;
+                                tooltipItems.forEach(i => sum += i.raw);
+                                return 'Tổng cộng: ' + sum.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { stacked: true, grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        // Chart 2: Http Status Distribution
+        new Chart(document.getElementById('httpChart'), {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    { label: '200 OK', data: httpData.map(h => h.c200), borderColor: '#10b981', borderWidth: 2, fill: false, tension: 0.3 },
+                    { label: '206 Partial', data: httpData.map(h => h.c206), borderColor: '#3b82f6', borderWidth: 2, fill: false, tension: 0.3 },
+                    { label: '304 Cache', data: httpData.map(h => h.c304), borderColor: '#facc15', borderWidth: 2, fill: false, tension: 0.3 },
+                    { label: '404 Error', data: httpData.map(h => h.c404), borderColor: '#ef4444', borderWidth: 2, fill: false, tension: 0.3 },
+                    { label: '500 Server Error', data: httpData.map(h => h.c500), borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.3 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#f1f5f9' } } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        // Section 3: Cards
+        const grid = document.querySelector('.stats-grid');
+        const statsPageSizeSelect = document.getElementById('stats-page-size');
+        const statsDateFilterInput = document.getElementById('stats-date-filter');
+        const statsPrevPageButton = document.getElementById('stats-prev');
+        const statsNextPageButton = document.getElementById('stats-next');
+        const statsPageInfo = document.getElementById('stats-page-info');
+        const statsRangeInfo = document.getElementById('stats-range');
+        const statsState = {
+            page: 1,
+            pageSize: 20,
+            query: ''
+        };
+
+        const getFilteredStats = () => rawData.filter(d => {
+            if (!statsState.query) return true;
+
+            return d.date.includes(statsState.query);
+        });
+
+        const getStatsPageSize = (totalRows) => statsState.pageSize === 'all'
+            ? Math.max(totalRows, 1)
+            : statsState.pageSize;
+
+        const renderStatsGrid = () => {
+            const filteredRows = getFilteredStats();
+            const pageSize = getStatsPageSize(filteredRows.length);
+            const totalPages = Math.max(Math.ceil(filteredRows.length / pageSize), 1);
+            statsState.page = Math.min(Math.max(statsState.page, 1), totalPages);
+
+            const startIndex = (statsState.page - 1) * pageSize;
+            const visibleRows = filteredRows.slice(startIndex, startIndex + pageSize);
+
+            grid.innerHTML = visibleRows.map(d => {
+                const formattedDate = d.date.replace(/_/g, '/');
+
+                return `
+                    <div class="daily-stat-card">
+                        <span class="date-label">${formattedDate}</span>
+                        <span class="req-value">${d.total.toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+
+            if (!visibleRows.length) {
+                grid.innerHTML = '<div class="daily-stat-card"><span class="empty-data">Không có dữ liệu phù hợp.</span></div>';
+            }
+
+            const rangeStart = filteredRows.length ? startIndex + 1 : 0;
+            const rangeEnd = filteredRows.length ? startIndex + visibleRows.length : 0;
+            statsPageInfo.textContent = `Trang ${statsState.page}/${totalPages}`;
+            statsRangeInfo.textContent = `Hiển thị ${rangeStart}-${rangeEnd} / ${filteredRows.length} ngày`;
+            statsPrevPageButton.disabled = statsState.page <= 1;
+            statsNextPageButton.disabled = statsState.page >= totalPages;
+        };
+
+        statsPageSizeSelect.addEventListener('change', event => {
+            statsState.pageSize = event.target.value === 'all' ? 'all' : Number(event.target.value);
+            statsState.page = 1;
+            renderStatsGrid();
+        });
+
+        statsDateFilterInput.addEventListener('input', event => {
+            statsState.query = event.target.value.trim();
+            statsState.page = 1;
+            renderStatsGrid();
+        });
+
+        statsPrevPageButton.addEventListener('click', () => {
+            statsState.page -= 1;
+            renderStatsGrid();
+        });
+
+        statsNextPageButton.addEventListener('click', () => {
+            statsState.page += 1;
+            renderStatsGrid();
+        });
+
+        renderStatsGrid();
+
+        // Table Details
+        const detailListLimit = 5;
+        const detailText = {
+            items: 'm\u1ee5c',
+            showAll: 'Xem t\u1ea5t c\u1ea3',
+            collapse: 'Thu g\u1ecdn'
+        };
+
+        const escapeHtml = (value) => String(value).replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[char]);
+
+        const parseDetailItems = (value) => (value || '')
+            .split(' | ')
+            .map(entry => entry.trim())
+            .filter(Boolean)
+            .map(entry => {
+                const match = entry.match(/^(\d+)\s+(.+)$/);
+
+                return {
+                    count: match ? Number(match[1]) : null,
+                    value: match ? match[2] : entry
+                };
+            });
+
+        const formatCount = (count) => Number.isFinite(count) ? count.toLocaleString() : '-';
+
+        const renderDataList = (value) => {
+            const items = parseDetailItems(value);
+            const canExpand = items.length > detailListLimit;
+            const rows = items.map((item, index) => {
+                const safeValue = escapeHtml(item.value);
+
+                return `
+                    <div class="data-row">
+                        <span class="rank-badge">${index + 1}</span>
+                        <span class="hit-count">${formatCount(item.count)}</span>
+                        <span class="data-value" title="${safeValue}">${safeValue}</span>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="data-list ${canExpand ? 'is-collapsed' : ''}">
+                    <div class="data-list-meta">
+                        <span>${items.length} ${detailText.items}</span>
+                        ${canExpand ? `<button type="button" class="toggle-list">${detailText.showAll}</button>` : ''}
+                    </div>
+                    <div class="data-items">${rows || '<span class="empty-data">-</span>'}</div>
+                </div>
+            `;
+        };
+
+        const tableBody = document.getElementById('data-body');
+        const pageSizeSelect = document.getElementById('details-page-size');
+        const dateFilterInput = document.getElementById('details-date-filter');
+        const prevPageButton = document.getElementById('details-prev');
+        const nextPageButton = document.getElementById('details-next');
+        const pageInfo = document.getElementById('details-page-info');
+        const rangeInfo = document.getElementById('details-range');
+        const detailsState = {
+            page: 1,
+            pageSize: 10,
+            query: ''
+        };
+
+        const getFilteredDetails = () => rawData.filter(d => {
+            if (!detailsState.query) return true;
+
+            return d.date.includes(detailsState.query);
+        });
+
+        const getPageSize = (totalRows) => detailsState.pageSize === 'all'
+            ? Math.max(totalRows, 1)
+            : detailsState.pageSize;
+
+        const renderDetailsTable = () => {
+            const filteredRows = getFilteredDetails();
+            const pageSize = getPageSize(filteredRows.length);
+            const totalPages = Math.max(Math.ceil(filteredRows.length / pageSize), 1);
+            detailsState.page = Math.min(Math.max(detailsState.page, 1), totalPages);
+
+            const startIndex = (detailsState.page - 1) * pageSize;
+            const visibleRows = filteredRows.slice(startIndex, startIndex + pageSize);
+
+            tableBody.innerHTML = visibleRows.map(d => `
+                <tr>
+                    <td class="date-cell">${d.date}</td>
+                    <td>${renderDataList(d.ips)}</td>
+                    <td>${renderDataList(d.urls)}</td>
+                    <td>${renderDataList(d.ip74urls)}</td>
+                </tr>
+            `).join('');
+
+            if (!visibleRows.length) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4"><span class="empty-data">Không có dữ liệu phù hợp.</span></td>
+                    </tr>
+                `;
+            }
+
+            const rangeStart = filteredRows.length ? startIndex + 1 : 0;
+            const rangeEnd = filteredRows.length ? startIndex + visibleRows.length : 0;
+            pageInfo.textContent = `Trang ${detailsState.page}/${totalPages}`;
+            rangeInfo.textContent = `Hiển thị ${rangeStart}-${rangeEnd} / ${filteredRows.length} ngày`;
+            prevPageButton.disabled = detailsState.page <= 1;
+            nextPageButton.disabled = detailsState.page >= totalPages;
+        };
+
+        pageSizeSelect.addEventListener('change', event => {
+            detailsState.pageSize = event.target.value === 'all' ? 'all' : Number(event.target.value);
+            detailsState.page = 1;
+            renderDetailsTable();
+        });
+
+        dateFilterInput.addEventListener('input', event => {
+            detailsState.query = event.target.value.trim();
+            detailsState.page = 1;
+            renderDetailsTable();
+        });
+
+        prevPageButton.addEventListener('click', () => {
+            detailsState.page -= 1;
+            renderDetailsTable();
+        });
+
+        nextPageButton.addEventListener('click', () => {
+            detailsState.page += 1;
+            renderDetailsTable();
+        });
+
+        renderDetailsTable();
+
+        tableBody.addEventListener('click', event => {
+            const button = event.target.closest('.toggle-list');
+            if (!button) return;
+
+            const list = button.closest('.data-list');
+            const isCollapsed = list.classList.toggle('is-collapsed');
+            button.textContent = isCollapsed ? detailText.showAll : detailText.collapse;
+        });
+    </script>
+</body>
+
+</html>
