@@ -1,0 +1,771 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Optimization - Test Report (Japanese)</title>
+<style>* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+    :root {
+      --primary: #F98800;
+      --bg: #0f172a;
+      --bg2: #1e293b;
+      --bg3: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --red: #dc2626;
+      --green: #16a34a;
+      --yellow: #d97706;
+      --blue: #3b82f6
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #1f2937;
+      border-bottom: 2px solid var(--primary);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap
+    }
+    .logo {
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+      margin-right: auto
+    }
+    nav a {
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: background 0.2s
+    }
+    nav a:hover {
+      background: var(--bg3);
+      color: var(--primary)
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px
+    }
+    h2 {
+      font-size: 1.4rem;
+      color: var(--primary);
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--bg3)
+    }
+    h3 {
+      font-size: 1.1rem;
+      color: #f1f5f9;
+      margin: 24px 0 12px
+    }
+    p {
+      margin-bottom: 12px;
+      color: var(--muted)
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      background: var(--bg2);
+      border-radius: 8px;
+      overflow: hidden
+    }
+    th,
+    td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--bg3)
+    }
+    th {
+      background: #0f172a88;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase
+    }
+    tr:last-child td {
+      border-bottom: none
+    }
+    code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #f87171
+    }
+    .tag {
+      display: inline-block;
+      background: var(--bg3);
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin: 2px
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0
+    }
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--bg3);
+      border-radius: 10px;
+      padding: 18px
+    }
+    .card h4 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 0.95rem
+    }
+    .card ul {
+      list-style: none
+    }
+    .card ul li {
+      padding: 4px 0;
+      color: var(--muted);
+      font-size: 0.875rem
+    }
+    .card ul li::before {
+      content: '→ ';
+      color: var(--primary)
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-left: 6px
+    }
+    .badge-pass {
+      background: #16a34a22;
+      color: #4ade80;
+      border: 1px solid #16a34a
+    }
+    .badge-fail {
+      background: #dc262622;
+      color: #f87171;
+      border: 1px solid #dc2626
+    }
+    .badge-warn {
+      background: #d9770622;
+      color: #fbbf24;
+      border: 1px solid #d97706
+    }
+    .checklist {
+      list-style: none;
+      margin: 16px 0
+    }
+    .checklist li {
+      padding: 8px 12px;
+      margin: 4px 0;
+      border-radius: 6px;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem
+    }
+    .checklist li::before {
+      content: '✅';
+      font-size: 1rem
+    }
+    .checklist li.warn::before {
+      content: '⚠️'
+    }
+    .checklist li.fail::before {
+      content: '❌'
+    }
+    .info-box {
+      background: var(--bg2);
+      border-left: 4px solid var(--blue);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 0.9rem
+    }
+    .warn-box {
+      background: var(--bg2);
+      border-left: 4px solid var(--yellow);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 0.9rem
+    }
+    .section {
+      margin-bottom: 48px
+    }
+    @media(max-width:700px) {
+      .grid2 {
+        grid-template-columns: 1fr
+      }
+    }</style>
+<nav>
+  <span class="logo">📊 Perf Test Report</span>
+  <a href="#objective">目的</a>
+  <a href="#scope">対象範囲</a>
+  <a href="#controllers">コントローラー</a>
+  <a href="#functional">機能テスト</a>
+  <a href="#search">検索ロジック</a>
+  <a href="#performance">パフォーマンス</a>
+  <a href="#risk">リスク</a>
+</nav>
+<div class="container">
+  <div style="padding:32px 0 16px">
+    <div style="color:var(--muted);font-size:0.85rem;margin-bottom:8px">2026-05-05 &nbsp;|&nbsp; Web Optimization Project</div>
+    <h1 style="font-size:2rem;font-weight:800;color:#f1f5f9">コード・クエリ最適化
+      <br>
+      <span style="color:var(--primary)">Webロード速度向上</span>
+    </h1>
+    <p style="margin-top:12px">最適化後も主要なフローが正しく動作し、速度が明確に改善されていることを担保する。</p>
+  </div>
+  <div class="part-divider" id="part-changes" style="margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 3px solid var(--primary);">
+    <h1 style="font-size: 1.8rem; color: var(--primary); margin: 0; text-transform: uppercase;">第1部：変更内容</h1>
+  </div>
+    <!-- Technical Summary -->
+  <div class="section" id="tech-summary">
+    <h2 style="display: none;">概要 &nbsp;— 修正内容および技術仕様</h2>
+    <p>深刻な技術的負債を解消するため、N+1クエリの排除、I/O負荷の軽減、および非同期処理の適用に焦点を当てて実施する。</p>
+    <div class="table-responsive" style="margin-bottom: 20px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 1px solid var(--bg3);">
+        <thead>
+          <tr style="background: var(--bg2);">
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 15%;">モジュール</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 45%;">修正内容</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 20%;">影響範囲</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 20%;">リスク（懸念点）</th>
+          </tr>
+        </thead>
+        <tbody><!-- Home -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>ホーム (Home)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted)">現状:</span> SubQuery（ROW_NUMBER）が繰り返し呼び出され、DBに過負荷をかけている（3.5秒）。
+              <br>
+              <strong style="color: var(--primary)">=&gt; 修正後:</strong> Global Cachingを適用し、全データをキャッシュ化（0.2秒）。
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">ホーム画面の表示。</td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; color: var(--yellow);">管理者が更新した後、データの表示に遅延が発生する可能性がある。</td>
+          </tr>
+            <!-- Experience -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>体験 (Experience)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted)">現状:</span> 日別の求人カウント処理でループ内でクエリが実行されている（O(N)）。
+              <br>
+              <strong style="color: var(--primary)">=&gt; 修正後:</strong> 1つの
+              <code>Group By</code>クエリ（O(1)）にリファクタリングし、静的ファイル
+              <code>area.json</code>をキャッシュ化。
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">体験機能に応じた求人のリスト表示。</td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">フィルターロジックに不具合がある場合、カウント数に乖離が生じる可能性がある。</td>
+          </tr>
+            <!-- Search -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>検索 (Search)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted)">現状:</span> Review/Tweetの読み込み時にN+1クエリが発生している。
+              <br>
+              <strong style="color: var(--primary)">=&gt; 修正後:</strong> Eager Loading（
+              <code>WHERE IN</code>）を使用し、データを一括でプリロードするようにリファクタリング。
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">検索結果および求人リスト。</td>
+            <td style="padding: 12px; vertical-align: top; color: var(--yellow);"></td>
+          </tr>
+            <!-- Apply -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>応募 (Apply)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted)">現状:</span> DB保存、メール送信、SMS送信を同期処理で行っているため、画面がフリーズする（5秒以上）。
+              <br>
+              <strong style="color: var(--primary)">=&gt; 修正後:</strong> 
+              <code>DB::transaction</code>を適用して安全性を担保し、メールとSMSの送信をバックグラウンドの非同期キュー（Async Queue）に移行（&lt;500ms）。
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">応募フローおよび通知送信。</td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; color: var(--yellow);"></td>
+          </tr>
+            <!-- Mypage/Footer -->
+          <tr>
+            <td style="padding: 12px; vertical-align: top;">
+              <strong>マイページ &amp; フッター</strong>
+            </td>
+            <td style="padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted)">現状:</span> ページ読み込みのたびにフッターで
+              <code>COUNT</code>クエリが連続して呼び出される。
+              <br>
+              <strong style="color: var(--primary)">=&gt; 修正後:</strong> フッターのView Composerをキャッシュ化（30分）。マイページのデータをEager load化。
+            </td>
+            <td style="padding: 12px; vertical-align: top;">フッターの求人カウント表示およびマイページの応募履歴リスト。</td>
+            <td style="padding: 12px; vertical-align: top; color: var(--yellow);"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="part-divider" id="part-testplan" style="margin: 60px 0 20px; padding-bottom: 10px; border-bottom: 3px solid var(--primary);">
+    <h1 style="font-size: 1.8rem; color: var(--primary); margin: 0; text-transform: uppercase;">第2部：テスト計画書</h1>
+  </div>
+    <!-- 1. Objective -->
+  <div class="section" id="objective">
+    <h2>1. 概要 &nbsp;— テスト目的</h2>
+    <div class="card">
+      <h4>✅ 主な目的</h4>
+      <ul>
+        <li>ロード速度が改善されていることを確認すること</li>
+        <li>求人/店舗/応募データが正しく表示されること</li>
+        <li>検索ロジックが意図せず変更されていないこと</li>
+        <li>500エラー、タイムアウト、メール送信エラーが発生しないこと</li>
+        <li>テスト環境で各画面が安定して動作すること</li>
+      </ul>
+    </div>
+  </div>
+    <!-- 2. Scope -->
+  <div class="section" id="scope">
+    <h2>対象範囲 &nbsp;— テスト範囲</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>フロー</th>
+          <th>確認内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="tag">求人詳細</span>
+          </td>
+          <td>求人詳細、店舗情報、画像、求人ステータス、およびプランが正しく表示されること。</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">求人検索</span>
+          </td>
+          <td>条件による検索、検索結果、表示順序、およびロード速度。</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">応募</span>
+          </td>
+          <td>1件の応募、複数件の応募、確認画面、完了画面、メール送信、マイページでの表示。</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">マイページ</span>
+          </td>
+          <td>アカウント情報が正しく、ログイン中のユーザーのデータのみが表示されること。</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">体験</span>
+          </td>
+          <td>求人が条件通りに表示され、検索時に正しい条件で結果が返されること。</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">ホームページ</span>
+          </td>
+          <td>エリアごとのデータが正しく読み込まれ、エリア切り替えやサイト上の情報が正しいこと。</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">パフォーマンス</span>
+          </td>
+          <td>主要画面での最適化前後のロード速度を比較すること。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <!-- 3. Controllers -->
+  <div class="section" id="controllers">
+    <h2>コントローラー &nbsp;— カバーすべき画面/機能</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>画面</th>
+          <th>Controller / Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>トップページ</td>
+          <td>
+            <code>IndexController@renewIndex</code>
+          </td>
+        </tr>
+        <tr>
+          <td>体験</td>
+          <td>
+            <code>ExperienceController@index</code>
+          </td>
+        </tr>
+        <tr>
+          <td>求人詳細</td>
+          <td>
+            <code>SingleController@single</code>
+          </td>
+        </tr>
+        <tr>
+          <td>詳細検索</td>
+          <td>
+            <code>DetailSearchController@index</code>
+          </td>
+        </tr>
+        <tr>
+          <td>検索結果 / アーカイブ</td>
+          <td>
+            <code>ArchiveController@index</code>
+          </td>
+        </tr>
+        <tr>
+          <td>1件応募</td>
+          <td>
+            <code>EntryController@index / @confirm / @complete</code>
+          </td>
+        </tr>
+        <tr>
+          <td>複数一括応募</td>
+          <td>
+            <code>CollectEntryController@index / @confirm / @complete</code>
+          </td>
+        </tr>
+        <tr>
+          <td>マイページ</td>
+          <td>
+            <code>MypageController@index</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <!-- 4. Functional -->
+  <div class="section" id="functional">
+    <h2>機能テスト 1 &nbsp;— 機能およびデータのリグレッションテスト</h2>
+    <h3>4.1 Functional Test (機能テスト)</h3>
+    <ul class="checklist">
+      <li>ユーザーがトップページ、求人リスト、求人詳細画面を開けること。</li>
+      <li>エリア/路線・駅/職種/待遇/給与/キーワードで検索した際、条件を満たす求人のみが正しく返され、対象外の求人が表示されないこと。</li>
+      <li>ユーザーが検索条件を変更できること。</li>
+      <li>必要な情報をすべて入力 → 確認 → 完了まで正常に遷移し、データがDBに保存され、メールがユーザー/店舗に正しく送信されること。</li>
+      <li>ユーザーが複数の求人に一括応募できること。</li>
+      <li>応募の確認および完了ができること。</li>
+      <li>システムからユーザー/店舗へ正しいメールが送信されること。</li>
+      <li>ログイン後、マイページには現在ログインしているユーザーのデータのみが表示され、他ユーザーのデータが誤って表示されないこと。</li>
+    </ul>
+    <h3>4.2 Data Test (データテスト)</h3>
+    <ul class="checklist">
+      <li>求人情報が正しく表示されること。</li>
+      <li>店舗情報が正しく表示されること。</li>
+      <li>求人/店舗の画像が正しく表示されること。</li>
+      <li>「承認済み」の求人ステータスが正しく表示されること。</li>
+      <li>「掲載終了」および「公開継続」の求人ステータスが正しく表示されること。</li>
+      <li>検索結果がフィルター条件と一致すること。</li>
+      <li>応募データが正しく保存されること。</li>
+      <li>応募した求人がマイページに正しく表示されること。</li>
+    </ul>
+    <h3>4.4 Regression Test (リグレッションテスト)</h3>
+    <ul class="checklist">
+      <li>ホーム/検索結果から求人詳細へのリンクが正常に遷移すること。</li>
+      <li>求人詳細/検索結果から応募フォームへのリンクが正常に遷移すること。</li>
+      <li>確認画面で入力したデータが保持されていること。</li>
+      <li>完了画面が正しく表示されること。</li>
+      <li>応募メールが正常に送信されること。</li>
+      <li>ログイン後、マイページにログイン中ユーザーのデータのみが表示されること。</li>
+      <li>PC/スマートフォン上でレイアウトの大きな崩れが発生しないこと。</li>
+    </ul>
+  </div>
+    <!-- 5. Search -->
+  <div class="section" id="search">
+    <h2>機能テスト 2 &nbsp;— 検索ロジックのリグレッションテスト</h2>
+    <div class="info-box">クエリ最適化によって検索ロジックが影響を受けていないか確認する。ここはクエリのリファクタリング時に最もリスクが高い領域である。</div>
+    <ul class="checklist">
+      <li>エリア検索</li>
+      <li>路線/駅検索</li>
+      <li>職種検索</li>
+      <li>待遇検索</li>
+      <li>給与検索</li>
+      <li>キーワード検索</li>
+      <li>複数条件の組み合わせ検索</li>
+      <li>求人が現在のプラン順序に従って正しくソート（並び替え）されていること。</li>
+      <li>検索条件の変更やリロードを行っても、結果に乖離が生じないこと。</li>
+    </ul>
+  </div>
+    <!-- 6. Performance -->
+  <div class="section" id="performance">
+    <h2>パフォーマンス 3 &nbsp;— パフォーマンス測定</h2>
+    <p>最適化前後のロード速度の測定および比較結果。</p>
+    <table>
+      <thead>
+        <tr>
+          <th>画面</th>
+          <th>重要指標</th>
+          <th>最適化前 (Before)</th>
+          <th>最適化後 (After)</th>
+          <th>改善</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>トップページ</td>
+          <td>Home fully loaded
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>13.72 s
+            <br>
+            <small>102.8 s</small>
+          </td>
+          <td>7.14 s
+            <br>
+            <small>2.44 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">40% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>求人詳細</td>
+          <td>Work list to fully loaded
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>3659 ms
+            <br>
+            <small>44.5 s</small>
+          </td>
+          <td>1496 ms
+            <br>
+            <small>11.0 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">30% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>検索結果</td>
+          <td>複数条件の組み合わせ検索
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>49.0 s
+            <br>
+            <small>(LCP)</small>
+          </td>
+          <td>4.6 s
+            <br>
+            <small>(LCP)</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">90.6% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>応募完了</td>
+          <td>Success modal time
+            <br>
+            <small>複数求人の応募</small>
+          </td>
+          <td>5562 ms
+            <br>
+            <small>---</small>
+          </td>
+          <td>1942 ms
+            <br>
+            <small>2.88 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">60% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>マイページ</td>
+          <td>Login to fully loaded
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>6.49 s
+            <br>
+            <small>5.9 s</small>
+          </td>
+          <td>4.89 s
+            <br>
+            <small>3.3 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">25% ↑</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <!-- 7. Risk -->
+  <div class="section" id="risk">
+    <h2>チェック項目 &nbsp;— リスクおよび対応策</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>リスク</th>
+          <th>対応策</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>求人/店舗データの誤り</td>
+          <td>表示データと管理画面/DBのデータを比較する</td>
+        </tr>
+        <tr>
+          <td>検索結果の誤り</td>
+          <td>様々な検索条件の組み合わせをテストする</td>
+        </tr>
+        <tr>
+          <td>プラン順序の誤り</td>
+          <td>プランに従って求人リストの順序を確認する</td>
+        </tr>
+        <tr>
+          <td>画像の欠落・エラー</td>
+          <td>画像あり/複数画像/画像なしの求人をそれぞれ確認する</td>
+        </tr>
+        <tr>
+          <td>応募エラー</td>
+          <td>入力 → 確認 → 完了までの全フローをテストする</td>
+        </tr>
+        <tr>
+          <td>メール未送信</td>
+          <td>応募後にユーザー/店舗のメール受信を確認する</td>
+        </tr>
+        <tr>
+          <td>マイページが更新されない</td>
+          <td>応募後に「応募済み」タブを確認する</td>
+        </tr>
+        <tr>
+          <td>500エラー/タイムアウト</td>
+          <td>異なるデータで複数回テストを実施する</td>
+        </tr>
+        <tr>
+          <td>最適化による既存ロジックの破壊</td>
+          <td>関連するフローのリグレッションテストを実行する</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <!-- 8. Pass/Fail Criteria -->
+  <div class="section" id="passfail">
+    <h2>判定基準 (Pass / Fail Criteria)</h2>
+    <div class="grid2">
+      <div class="card" style="border-color:#16a34a">
+        <h4 style="color:#4ade80">✅ 合格基準 (PASS)</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px;">
+          <tbody>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>機能テスト</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">主要フロー（Home/Search/Detail/Entry/Mypage）が正常に動作すること。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>データ</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">求人/店舗/画像/ステータス/プランが正しく表示されること。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>検索</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">検索結果および表示順序が現行の仕様と相違ないこと。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>応募</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">応募が成功し、DBに正しく保存され、メールが正常に送信されること。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>パフォーマンス</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">最適化後の主要指標が以前より改善されている、または深刻な劣化がないこと。</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 4px;">
+                <strong>エラー</strong>
+              </td>
+              <td style="padding: 8px 4px;">500エラー、タイムアウト、および致命的なJSエラーが発生しないこと。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="border-color:#dc2626">
+        <h4 style="color:#f87171">❌ 不合格基準 (FAIL)</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px;">
+          <tbody>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>機能テスト</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">検索できない、詳細画面が開けない、応募できないなどの機能不全。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>データ</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">求人/店舗/ステータス/プランの表示に誤りがある。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>検索</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">検索結果が誤っている、または優先順位が間違っている。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>応募</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">メールが送信されない、データが保存されない、完了画面でエラーになる。</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>パフォーマンス</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">最適化後、主要フローでの速度が明らかに遅延している。</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 4px;">
+                <strong>エラー</strong>
+              </td>
+              <td style="padding: 8px 4px;">機能に影響を与える500エラー/タイムアウト、またはコンソールエラーが存在する。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;padding:32px 0;color:var(--muted);font-size:0.8rem;border-top:1px solid var(--bg3);margin-top:40px">Generated: 2026-05-05 &nbsp;|&nbsp; Web Optimization Performance Test Plan</div>
+</div>

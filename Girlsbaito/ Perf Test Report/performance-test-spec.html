@@ -1,0 +1,757 @@
+<style>* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+    :root {
+      --primary: #F98800;
+      --bg: #0f172a;
+      --bg2: #1e293b;
+      --bg3: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --red: #dc2626;
+      --green: #16a34a;
+      --yellow: #d97706;
+      --blue: #3b82f6
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #1f2937;
+      border-bottom: 2px solid var(--primary);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap
+    }
+    nav .logo {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1rem;
+      margin-right: 16px
+    }
+    nav a {
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: background 0.2s
+    }
+    nav a:hover {
+      background: var(--bg3);
+      color: var(--primary)
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px
+    }
+    h2 {
+      font-size: 1.4rem;
+      color: var(--primary);
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--bg3)
+    }
+    h3 {
+      font-size: 1.1rem;
+      color: #f1f5f9;
+      margin: 24px 0 12px
+    }
+    p {
+      margin-bottom: 12px;
+      color: var(--muted)
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem
+    }
+    th {
+      background: var(--bg3);
+      color: var(--primary);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--bg3);
+      color: var(--text)
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.03)
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-left: 6px
+    }
+    .badge-pass {
+      background: #16a34a22;
+      color: #4ade80;
+      border: 1px solid #16a34a
+    }
+    .badge-fail {
+      background: #dc262622;
+      color: #f87171;
+      border: 1px solid #dc2626
+    }
+    .badge-warn {
+      background: #d9770622;
+      color: #fbbf24;
+      border: 1px solid #d97706
+    }
+    .checklist {
+      list-style: none;
+      margin: 16px 0
+    }
+    .checklist li {
+      padding: 8px 12px;
+      margin: 4px 0;
+      border-radius: 6px;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem
+    }
+    .checklist li::before {
+      content: '✅';
+      font-size: 1rem
+    }
+    .checklist li.warn::before {
+      content: '⚠️'
+    }
+    .checklist li.fail::before {
+      content: '❌'
+    }
+    .info-box {
+      background: var(--bg2);
+      border-left: 4px solid var(--blue);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 0.9rem
+    }
+    .warn-box {
+      background: var(--bg2);
+      border-left: 4px solid var(--yellow);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 0.9rem
+    }
+    .section {
+      margin-bottom: 48px
+    }
+    .tag {
+      display: inline-block;
+      background: var(--bg3);
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin: 2px
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0
+    }
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--bg3);
+      border-radius: 10px;
+      padding: 18px
+    }
+    .card h4 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 0.95rem
+    }
+    .card ul {
+      list-style: none
+    }
+    .card ul li {
+      padding: 4px 0;
+      color: var(--muted);
+      font-size: 0.875rem
+    }
+    .card ul li::before {
+      content: '→ ';
+      color: var(--primary)
+    }
+    @media(max-width:700px) {
+      .grid2 {
+        grid-template-columns: 1fr
+      }
+    }</style>
+<nav>
+  <span class="logo">📊 Perf Test Report</span> 
+  <a href="#objective">Mục tiêu</a> 
+  <a href="#scope">Phạm vi</a> 
+  <a href="#controllers">Controller</a> 
+  <a href="#functional">Functional</a> 
+  <a href="#search">Search</a> 
+  <a href="#performance">Performance</a> 
+  <a href="#risk">Risk</a>
+</nav>
+<div class="container">
+  <div style="padding: 32px 0 16px;">
+    <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 8px;">2026-05-05 &nbsp;|&nbsp; Web Optimization Project</div>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #f1f5f9;">Tối ưu Code/Query 
+      <br>
+      <span style="color: var(--primary);">Tăng tốc độ load web</span>
+    </h1>
+    <p style="margin-top: 12px;">Đảm bảo sau khi tối ưu, các luồng chính vẫn hoạt động đúng và tốc độ cải thiện rõ rệt.</p>
+  </div>
+  <div id="part-changes" class="part-divider" style="margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 3px solid var(--primary);">
+    <h1 style="font-size: 1.8rem; color: var(--primary); margin: 0; text-transform: uppercase;">PHẦN I: Nội dung thay đổi</h1>
+  </div>
+<!-- Technical Summary -->
+  <div id="tech-summary" class="section">
+    <h2 style="display: none;">Tổng quan &nbsp;— Nội dung sửa &amp; Thông số kỹ thuật</h2>
+    <p>Thực hiện giải quyết các vấn đề kỹ thuật nghiêm trọng, tập trung vào triệt tiêu N+1 Query, giảm tải I/O và áp dụng xử lý bất đồng bộ.</p>
+    <div class="table-responsive" style="margin-bottom: 20px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 1px solid var(--bg3);">
+        <thead>
+          <tr style="background: var(--bg2);">
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 15%;">Module</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 45%;">Nội dung sửa</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 20%;">Phạm vi ảnh hưởng</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--bg3); color: var(--text); width: 20%;">Rủi ro (nếu có)</th>
+          </tr>
+        </thead>
+        <tbody><!-- Home -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>Trang chủ (Home)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted);">Hiện tại:</span> SubQuery (ROW_NUMBER) gọi lặp lại nhiều lần gây quá tải DB (3.5s). 
+              <br>
+              <strong style="color: var(--primary);">=&gt; Sau khi sửa:</strong> Áp dụng Global Caching toàn bộ dữ liệu (0.2s).
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">Hiển thị trang chủ.</td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; color: var(--yellow);">Dữ liệu có thể delay hiển thị sau khi Admin cập nhật.</td>
+          </tr>
+<!-- Experience -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>Experience</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted);">Hiện tại:</span> Query lặp trong vòng lặp (O(N)) đếm job theo ngày. 
+              <br>
+              <strong style="color: var(--primary);">=&gt; Sau khi sửa:</strong> Refactor thành 1 query 
+              <code>Group By</code> (O(1)) và Cache file tĩnh 
+              <code>area.json</code>.
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">Danh sách hiển thị job theo làm thử thông minh.</td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">Có thể sai lệch số lượng đếm nếu filter logic bị lỗi.</td>
+          </tr>
+<!-- Search -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>Tìm kiếm (Search)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted);">Hiện tại:</span> N+1 Query khi load Review/Tweet. 
+              <br>
+              <strong style="color: var(--primary);">=&gt; Sau khi sửa:</strong> Refactor sử dụng Eager Loading ( 
+              <code>WHERE IN</code>) để pre-load dữ liệu 1 lượt.
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">Kết quả tìm kiếm và danh sách job.</td>
+            <td style="padding: 12px; vertical-align: top; color: var(--yellow);">&nbsp;</td>
+          </tr>
+<!-- Apply -->
+          <tr>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">
+              <strong>Ứng tuyển (Apply)</strong>
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted);">Hiện tại:</span> Lưu DB, gửi Mail, gửi SMS thực hiện đồng bộ gây treo trang (&gt;5s). 
+              <br>
+              <strong style="color: var(--primary);">=&gt; Sau khi sửa:</strong> Áp dụng 
+              <code>DB::transaction</code> để đảm bảo an toàn, chuyển Mail &amp; SMS sang Async Queue ngầm (&lt;500ms).
+            </td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top;">Luồng ứng tuyển và gửi thông báo.</td>
+            <td style="border-bottom: 1px solid var(--bg3); padding: 12px; vertical-align: top; color: var(--yellow);">&nbsp;</td>
+          </tr>
+<!-- Mypage/Footer -->
+          <tr>
+            <td style="padding: 12px; vertical-align: top;">
+              <strong>Mypage &amp; Footer</strong>
+            </td>
+            <td style="padding: 12px; vertical-align: top; line-height: 1.5;">
+              <span style="color: var(--muted);">Hiện tại:</span> Query 
+              <code>COUNT</code> gọi liên tục ở Footer mỗi lần load trang. 
+              <br>
+              <strong style="color: var(--primary);">=&gt; Sau khi sửa:</strong> Cache View Composer ở footer (30 phút). Eager load dữ liệu Mypage.
+            </td>
+            <td style="padding: 12px; vertical-align: top;">Số đếm job ở Footer và danh sách đã ứng tuyển Mypage.</td>
+            <td style="padding: 12px; vertical-align: top; color: var(--yellow);">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="part-testplan" class="part-divider" style="margin: 60px 0 20px; padding-bottom: 10px; border-bottom: 3px solid var(--primary);">
+    <h1 style="font-size: 1.8rem; color: var(--primary); margin: 0; text-transform: uppercase;">PHẦN II: Test Plan</h1>
+  </div>
+<!-- 1. Objective -->
+  <div id="objective" class="section">
+    <h2>1. Tổng quan &nbsp;— Mục tiêu test</h2>
+    <div class="card">
+      <h4>✅ Mục tiêu chính</h4>
+      <ul>
+        <li>Xác nhận tốc độ load được cải thiện</li>
+        <li>Dữ liệu job/store/apply hiển thị đúng</li>
+        <li>Logic search không bị thay đổi ngoài ý muốn</li>
+        <li>Không phát sinh lỗi 500, timeout, lỗi mail</li>
+        <li>Các màn hình ổn định trên môi trường test</li>
+      </ul>
+    </div>
+  </div>
+<!-- 2. Scope -->
+  <div id="scope" class="section">
+    <h2>Phạm vi &nbsp;— Phạm vi test</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Luồng</th>
+          <th>Nội dung kiểm tra</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="tag">Xem Job</span>
+          </td>
+          <td>Hiển thị chi tiết job, thông tin store, ảnh, trạng thái job và plan</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">Search Job</span>
+          </td>
+          <td>Tìm kiếm theo điều kiện, kết quả search, thứ tự hiển thị và tốc độ load</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">Ứng tuyển</span>
+          </td>
+          <td>Ứng tuyển 1 job, nhiều job, confirm, complete, gửi mail, hiển thị trong mypage</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">Mypage</span>
+          </td>
+          <td>Kiểm tra đúng tài khoản, dữ liệu hiển thị là của user đó</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">Experience</span>
+          </td>
+          <td>Job hiển thị đúng điều kiện, khi search trả điều kiện đúng</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">Homepage</span>
+          </td>
+          <td>Load dữ liệu đúng khu vực, chuyển khu vực, thông tin trên site</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tag">Performance</span>
+          </td>
+          <td>So sánh tốc độ load trước/sau tối ưu ở các màn hình chính</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+<!-- 3. Controllers -->
+  <div id="controllers" class="section">
+    <h2>Controller &nbsp;— Màn hình/tính năng cần cover</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Màn hình</th>
+          <th>Controller / Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Trang chủ</td>
+          <td>
+            <code>IndexController@renewIndex</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Experience</td>
+          <td>
+            <code>ExperienceController@index</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Chi tiết job</td>
+          <td>
+            <code>SingleController@single</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Detail search</td>
+          <td>
+            <code>DetailSearchController@index</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Search result / Archive</td>
+          <td>
+            <code>ArchiveController@index</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Ứng tuyển 1 job</td>
+          <td>
+            <code>EntryController@index / @confirm / @complete</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Ứng tuyển nhiều job</td>
+          <td>
+            <code>CollectEntryController@index / @confirm / @complete</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Mypage</td>
+          <td>
+            <code>MypageController@index</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+<!-- 4. Functional -->
+  <div id="functional" class="section">
+    <h2>Hạng mục kiểm thử 1 &nbsp;— Functional &amp; Data Regression</h2>
+    <h3>4.1 Functional Test</h3>
+    <ul class="checklist">
+      <li>User có thể mở trang chủ, danh sách job và chi tiết job</li>
+      <li>Khi user search theo khu vực/tuyến ga/ngành/đãi ngộ/lương/keyword, hệ thống phải trả về đúng job thỏa mãn điều kiện, không thiếu job hợp lệ và không hiển thị job không phù hợp</li>
+      <li>User có thể thay đổi điều kiện search</li>
+      <li>User nhập đầy đủ thông tin → confirm → complete thành công, dữ liệu được lưu DB, mail được gửi đúng user/store</li>
+      <li>User có thể ứng tuyển nhiều job</li>
+      <li>User có thể xác nhận và hoàn thành ứng tuyển</li>
+      <li>Hệ thống gửi mail đúng cho user/store</li>
+      <li>Sau khi login, mypage chỉ hiển thị dữ liệu của user đang đăng nhập, không hiển thị nhầm dữ liệu user khác</li>
+    </ul>
+    <h3>4.2 Data Test</h3>
+    <ul class="checklist">
+      <li>Thông tin job hiển thị đúng</li>
+      <li>Thông tin store hiển thị đúng</li>
+      <li>Ảnh job/store hiển thị đúng</li>
+      <li>Trạng thái job Đã phê duyệt hiển thị đúng</li>
+      <li>Trạng thái job Hết hạn đăng &amp; Tiếp tục công khai hiển thị đúng</li>
+      <li>Kết quả search đúng với điều kiện lọc</li>
+      <li>Dữ liệu ứng tuyển được lưu đúng</li>
+      <li>Job đã ứng tuyển hiển thị đúng trong mypage</li>
+    </ul>
+    <h3>4.4 Regression Test</h3>
+    <ul class="checklist">
+      <li>Link từ home/search result sang detail job</li>
+      <li>Link từ detail/search result sang form ứng tuyển</li>
+      <li>Màn confirm giữ đúng dữ liệu đã nhập</li>
+      <li>Màn complete hiển thị đúng</li>
+      <li>Mail ứng tuyển vẫn gửi bình thường</li>
+      <li>Sau khi login, mypage chỉ hiển thị dữ liệu của user đang đăng nhập, không hiển thị nhầm dữ liệu user khác</li>
+      <li>Không phát sinh lỗi layout lớn trên PC/SP</li>
+    </ul>
+  </div>
+<!-- 5. Search -->
+  <div id="search" class="section">
+    <h2>Hạng mục kiểm thử 2 &nbsp;— Search Logic Regression</h2>
+    <div class="info-box">Kiểm tra logic search không bị ảnh hưởng bởi tối ưu query. Đây là khu vực có rủi ro cao nhất khi refactor query.</div>
+    <ul class="checklist">
+      <li>Search theo khu vực</li>
+      <li>Search theo tuyến/ga</li>
+      <li>Search theo ngành/nghề</li>
+      <li>Search theo đãi ngộ</li>
+      <li>Search theo lương</li>
+      <li>Search theo keyword</li>
+      <li>Search kết hợp nhiều điều kiện</li>
+      <li>Job phải được sắp xếp theo đúng thứ tự plan hiện tại</li>
+      <li>Reload/thay đổi điều kiện search không làm sai kết quả</li>
+    </ul>
+  </div>
+<!-- 6. Performance -->
+  <div id="performance" class="section">
+    <h2>Hạng mục kiểm thử 3 &nbsp;— Performance Measurement</h2>
+    <p>Kết quả đo và so sánh tốc độ load trước/sau tối ưu.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Màn hình</th>
+          <th>Chỉ số quan trọng</th>
+          <th>Trước (Before)</th>
+          <th>Sau (After)</th>
+          <th>Cải thiện</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Home</td>
+          <td>Home fully loaded 
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>13.72 s 
+            <br>
+            <small>102.8 s</small>
+          </td>
+          <td>7.14 s 
+            <br>
+            <small>2.44 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">40% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Detail Job</td>
+          <td>Work list to fully loaded 
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>3659 ms 
+            <br>
+            <small>44.5 s</small>
+          </td>
+          <td>1496 ms 
+            <br>
+            <small>11.0 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">30% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Archive Search</td>
+          <td>Search kết hợp nhiều điều kiện 
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>49.0 s 
+            <br>
+            <small>(LCP)</small>
+          </td>
+          <td>4.6 s 
+            <br>
+            <small>(LCP)</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">90.6% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Entry / Submit</td>
+          <td>Success modal time 
+            <br>
+            <small>Apply nhiều job</small>
+          </td>
+          <td>5562 ms 
+            <br>
+            <small>---</small>
+          </td>
+          <td>1942 ms 
+            <br>
+            <small>2.88 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">60% ↑</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Mypage</td>
+          <td>Login to fully loaded 
+            <br>
+            <small>Largest Contentful Paint (LCP)</small>
+          </td>
+          <td>6.49 s 
+            <br>
+            <small>5.9 s</small>
+          </td>
+          <td>4.89 s 
+            <br>
+            <small>3.3 s</small>
+          </td>
+          <td>
+            <span class="badge badge-pass">25% ↑</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+<!-- 7. Risk -->
+  <div id="risk" class="section">
+    <h2>Hạng mục kiểm tra &nbsp;— Rủi ro &amp; Cách cover</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rủi ro</th>
+          <th>Cách cover</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sai dữ liệu job/store</td>
+          <td>So sánh dữ liệu hiển thị với dữ liệu admin/DB</td>
+        </tr>
+        <tr>
+          <td>Sai kết quả search</td>
+          <td>Test nhiều điều kiện search khác nhau</td>
+        </tr>
+        <tr>
+          <td>Sai thứ tự plan</td>
+          <td>Kiểm tra danh sách job theo plan</td>
+        </tr>
+        <tr>
+          <td>Thiếu ảnh hoặc lỗi ảnh</td>
+          <td>Kiểm tra job có ảnh / nhiều ảnh / không ảnh</td>
+        </tr>
+        <tr>
+          <td>Lỗi ứng tuyển</td>
+          <td>Test đầy đủ từ input → confirm → complete</td>
+        </tr>
+        <tr>
+          <td>Không gửi mail</td>
+          <td>Kiểm tra mail user/store sau khi ứng tuyển</td>
+        </tr>
+        <tr>
+          <td>Mypage không cập nhật</td>
+          <td>Kiểm tra tab Đã ứng tuyển sau khi ứng tuyển</td>
+        </tr>
+        <tr>
+          <td>Lỗi 500/timeout</td>
+          <td>Test nhiều lần với data khác nhau</td>
+        </tr>
+        <tr>
+          <td>Tối ưu làm sai logic cũ</td>
+          <td>Chạy regression các luồng liên quan</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+<!-- 8. Pass/Fail Criteria -->
+  <div id="passfail" class="section">
+    <h2>Tiêu chí đánh giá (Pass / Fail Criteria)</h2>
+    <div class="grid2">
+      <div class="card" style="border-color: #16a34a;">
+        <h4 style="color: #4ade80;">✅ Điểm PASS</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px;">
+          <tbody>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Functional</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Các luồng chính Home/Search/Detail/Entry/Mypage hoạt động bình thường</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Data</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Job/store/image/status/plan hiển thị đúng</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Search</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Kết quả search và thứ tự hiển thị không sai so với spec hiện tại</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Entry</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Ứng tuyển thành công, lưu DB đúng, gửi mail đúng</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Performance</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Các chỉ số chính sau tối ưu tốt hơn trước hoặc không degrade nghiêm trọng</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 4px;">
+                <strong>Error</strong>
+              </td>
+              <td style="padding: 8px 4px;">Không phát sinh lỗi 500, timeout, lỗi JS nghiêm trọng</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="border-color: #dc2626;">
+        <h4 style="color: #f87171;">❌ Điểm FAIL</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px;">
+          <tbody>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Functional</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Không thể search, không mở được detail, không ứng tuyển được</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Data</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Hiển thị sai job/store/status/plan</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Search</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Search trả sai kết quả hoặc sai thứ tự ưu tiên</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Entry</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Không gửi mail, không lưu dữ liệu, complete lỗi</td>
+            </tr>
+            <tr>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">
+                <strong>Performance</strong>
+              </td>
+              <td style="border-bottom: 1px solid var(--bg3); padding: 8px 4px;">Sau tối ưu chậm hơn rõ rệt ở luồng chính</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 4px;">
+                <strong>Error</strong>
+              </td>
+              <td style="padding: 8px 4px;">Có lỗi 500/timeout hoặc lỗi console ảnh hưởng chức năng</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div style="text-align: center; padding: 32px 0; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--bg3); margin-top: 40px;">Generated: 2026-05-05 &nbsp;|&nbsp; Web Optimization Performance Test Plan</div>
+</div>
