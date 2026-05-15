@@ -93,8 +93,8 @@
 
     [data-theme="dark"] .logo-link svg[viewBox="0 0 24 24"] path[stroke="#1E293B"],
     [data-theme="dark"] .logo-link svg[viewBox="0 0 24 24"] circle[fill="#1E293B"] {
-      stroke: var(--white) !important;
-      fill: var(--white) !important;
+       stroke: var(--white) !important;
+       fill: var(--white) !important;
     }
 
     [data-theme="dark"] table th {
@@ -251,8 +251,7 @@
       border-radius: 8px;
       transition: 0.3s;
       letter-spacing: 0.2px;
-      white-space: nowrap;
-      /* Force one line */
+      white-space: nowrap; /* Force one line */
     }
 
     .nav-links a:hover {
@@ -289,6 +288,51 @@
 
     .theme-toggle i {
       font-size: 1.1rem;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-left: auto;
+    }
+
+    .lang-switcher {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+      margin-right: 5px;
+    }
+
+    .lang-btn {
+      padding: 6px 10px;
+      border-radius: 7px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--text-muted);
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lang-btn:hover {
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .lang-btn.active {
+      background: var(--blue);
+      color: white !important;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+    }
+
+    [data-theme="dark"] .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     /* Layout */
@@ -338,9 +382,7 @@
       font-weight: 800;
     }
 
-    [data-theme="dark"] h4 {
-      color: var(--white);
-    }
+    [data-theme="dark"] h4 { color: var(--white); }
 
     h2 {
       font-size: 2.5rem;
@@ -548,7 +590,7 @@
       box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
       transition: all 0.4s ease;
     }
-
+    
     [data-theme="dark"] .v-mid-pill:hover {
       background: rgba(30, 41, 59, 0.9);
       border-color: var(--blue);
@@ -596,8 +638,7 @@
     }
 
     .v-card:hover .v-item {
-      color: var(--text);
-      /* Maintain visibility */
+      color: var(--text); /* Maintain visibility */
     }
 
     [data-theme="dark"] .v-card:hover .v-item {
@@ -956,7 +997,7 @@
       color: var(--blue);
       transform: scale(1.002);
     }
-
+      
     [data-theme="dark"] tr:hover {
       background: rgba(59, 130, 246, 0.2);
       color: var(--white) !important;
@@ -1139,8 +1180,7 @@
       border-radius: 12px;
       font-family: 'Fira Code', monospace;
       font-size: 0.9rem;
-      color: #f1f5f9 !important;
-      /* Always light text on dark background */
+      color: #f1f5f9 !important; /* Always light text on dark background */
       border: 1px solid #334155;
       margin: 10px 0;
       line-height: 1.6;
@@ -1353,8 +1393,7 @@
     .dev-branch-item {
       display: flex;
       align-items: stretch;
-      background: var(--bg-card);
-      /* Changed for better theme support */
+      background: var(--bg-card); /* Changed for better theme support */
       border: 1px solid var(--border);
       border-radius: 16px;
       overflow: hidden;
@@ -1497,21 +1536,17 @@
         flex-direction: column;
         gap: 40px;
       }
-
       .dev-connectors {
         display: none;
       }
-
       .dev-branch-content {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
-
       .dev-branch-title {
         width: 100%;
       }
-
       .dev-branch-content ul {
         border-left: none;
         padding-left: 0;
@@ -1522,20 +1557,16 @@
     .dev-connectors {
       position: absolute;
       top: 0;
-      left: 320px;
-      /* Start after circle */
-      width: 60px;
-      /* The gap width */
+      left: 320px; /* Start after circle */
+      width: 60px;  /* The gap width */
       height: 100%;
       z-index: 5;
       pointer-events: none;
     }
-
     .dev-connectors svg {
       width: 100%;
       height: 100%;
     }
-
     .connector-line {
       fill: none;
       stroke-width: 2.5;
@@ -1545,12 +1576,11 @@
       opacity: 0;
       transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .reveal.active .connector-line {
       stroke-dashoffset: 0;
       opacity: 0.6;
     }
-
+    
     /* Anchor Nodes */
     .connector-node {
       fill: #fff;
@@ -1558,7 +1588,6 @@
       transition: opacity 0.5s ease-in;
       transition-delay: 1.2s;
     }
-
     .reveal.active .connector-node {
       opacity: 1;
       filter: drop-shadow(0 0 5px #fff);
@@ -1570,51 +1599,23 @@
       filter: drop-shadow(0 0 10px #fff);
       opacity: 0;
     }
-
     .reveal.active .signal-dot {
       animation: signal-move 4s infinite linear;
       opacity: 1;
     }
 
     @keyframes signal-move {
-      0% {
-        offset-distance: 0%;
-        opacity: 0;
-      }
-
-      10% {
-        opacity: 1;
-      }
-
-      90% {
-        opacity: 1;
-      }
-
-      100% {
-        offset-distance: 100%;
-        opacity: 0;
-      }
+      0% { offset-distance: 0%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
     }
 
-    .connector-line.blue {
-      stroke: #3b82f6;
-    }
-
-    .connector-line.green {
-      stroke: #10b981;
-    }
-
-    .connector-line.orange {
-      stroke: #f59e0b;
-    }
-
-    .connector-line.purple {
-      stroke: #8b5cf6;
-    }
-
-    .connector-line.cyan {
-      stroke: #06b6d4;
-    }
+    .connector-line.blue { stroke: #3b82f6; }
+    .connector-line.green { stroke: #10b981; }
+    .connector-line.orange { stroke: #f59e0b; }
+    .connector-line.purple { stroke: #8b5cf6; }
+    .connector-line.cyan { stroke: #06b6d4; }
 
     /* Prompt Structure Diagram Styles */
     .structure-container {
@@ -1623,8 +1624,7 @@
       justify-content: center;
       gap: 10px;
       margin: 50px 0;
-      flex-wrap: wrap;
-      /* Wrap instead of scroll */
+      flex-wrap: wrap; /* Wrap instead of scroll */
       padding: 20px 0;
     }
 
@@ -1766,7 +1766,6 @@
         align-items: center;
         gap: 0;
       }
-
       .comp-card {
         width: 100%;
         max-width: 400px;
@@ -1774,11 +1773,9 @@
         flex: none;
         margin-bottom: 0;
       }
-
       .comp-plus {
         margin: 15px 0;
-        transform: rotate(90deg);
-        /* Point downwards on mobile */
+        transform: rotate(90deg); /* Point downwards on mobile */
       }
     }
 
@@ -1882,7 +1879,6 @@
         padding: 8px 12px;
         font-size: 0.8rem;
       }
-
       .logo {
         margin-right: 20px;
       }
@@ -1892,7 +1888,6 @@
       .nav-links {
         gap: 2px;
       }
-
       .nav-links a {
         padding: 6px 8px;
         font-size: 0.75rem;
@@ -1910,7 +1905,6 @@
       z-index: 1100;
       padding: 10px;
     }
-
     .menu-toggle span {
       width: 28px;
       height: 3px;
@@ -1919,38 +1913,25 @@
       transition: 0.3s;
       transform-origin: center;
     }
+    .menu-toggle.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .menu-toggle.open span:nth-child(2) { opacity: 0; }
+    .menu-toggle.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-    .menu-toggle.open span:nth-child(1) {
-      transform: translateY(9px) rotate(45deg);
-    }
-
-    .menu-toggle.open span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .menu-toggle.open span:nth-child(3) {
-      transform: translateY(-9px) rotate(-45deg);
-    }
-
-    @media (max-width: 1199px) {
-
-      /* Tablet and below */
+    @media (max-width: 1199px) { /* Tablet and below */
       nav {
         padding: 0 30px;
-        justify-content: space-between;
-        /* Logo left, Controls right */
+        justify-content: space-between; /* Logo left, Controls right */
       }
-
+      
       .nav-controls {
         display: flex;
         align-items: center;
         gap: 15px;
       }
-
+      
       .menu-toggle {
         display: flex;
       }
-
       .nav-links {
         position: fixed;
         top: 0;
@@ -1962,16 +1943,14 @@
         padding: 100px 40px;
         gap: 20px;
         transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
+        box-shadow: -10px 0 40px rgba(0,0,0,0.2);
         z-index: 1000;
         backdrop-filter: blur(10px);
         border-left: 1px solid var(--glass-border);
       }
-
       .nav-links.open {
         right: 0;
       }
-
       .nav-links a {
         width: 100%;
         font-size: 1.1rem;
@@ -1979,52 +1958,38 @@
         border-bottom: 1px solid var(--glass-border);
         border-radius: 0;
       }
-
       .nav-links a.active {
         background: var(--blue-glow);
         color: var(--blue);
         border-radius: 12px;
       }
-
-      .nav-copyright {
-        display: none;
-      }
+      .nav-copyright { display: none; }
     }
 
-    @media (max-width: 770px) {
-
-      /* Smartphone (SP) optimization - below 770px */
-      html,
-      body {
+    @media (max-width: 770px) { /* Smartphone (SP) optimization - below 770px */
+      html, body {
         overflow-x: hidden;
         width: 100%;
         position: relative;
       }
-
+      
       nav {
         height: 70px;
         padding: 0 15px;
         justify-content: space-between;
       }
-
       .logo {
         margin-right: 0;
         font-size: 1.1rem;
         gap: 8px;
       }
-
-      .logo img {
-        height: 22px !important;
-      }
-
-      .shimmer-text {
-        font-size: 0.9rem;
-      }
-
+      .logo img { height: 22px !important; }
+      .shimmer-text { font-size: 0.9rem; }
+      
       .nav-controls {
         gap: 10px;
       }
-
+      
       .theme-toggle {
         width: 36px;
         height: 36px;
@@ -2041,17 +2006,16 @@
         font-size: 2.2rem;
         text-align: center;
       }
-
       .header-desc {
         font-size: 1rem;
         text-align: center;
       }
-
+      
       .progress-container {
         height: 4px;
         top: 70px;
       }
-
+      
       .progress-percentage {
         bottom: 10px;
         right: 10px;
@@ -2064,7 +2028,6 @@
         text-align: center;
         justify-content: center;
       }
-
       h3 {
         font-size: 1.3rem;
         margin: 30px 0 20px;
@@ -2083,11 +2046,11 @@
         padding: 20px;
         text-align: center;
       }
-
+      
       .card-title {
         justify-content: center;
       }
-
+      
       /* SP Full-Screen Centered Menu */
       .nav-links {
         left: 0;
@@ -2106,20 +2069,16 @@
         backdrop-filter: blur(30px);
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        /* Changed from center to allow scrolling from top */
-        overflow-y: auto;
-        /* Enable internal scrolling if items are too many */
+        justify-content: flex-start; /* Changed from center to allow scrolling from top */
+        overflow-y: auto; /* Enable internal scrolling if items are too many */
         z-index: 1000;
         position: fixed;
       }
-
       .nav-links.open {
         transform: translateY(0);
         opacity: 1;
         pointer-events: all;
       }
-
       .nav-links a {
         border-bottom: 1px solid var(--glass-border);
         padding: 15px 10px;
@@ -2127,26 +2086,23 @@
         font-weight: 700;
         width: 100%;
       }
-
       .nav-links a:last-child {
         border-bottom: none;
       }
-
+      
       .table-wrapper {
         margin: 20px -10px;
         border-radius: 12px;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
-
+      
       table {
-        min-width: 600px;
-        /* Force scroll for better layout */
+        min-width: 600px; /* Force scroll for better layout */
         font-size: 0.85rem;
       }
-
-      td,
-      th {
+      
+      td, th {
         padding: 12px 10px;
       }
 
@@ -2156,44 +2112,37 @@
         text-align: center;
         gap: 15px;
       }
-
       .v-summary-text {
         font-size: 1rem;
       }
-
+      
       /* Venn diagram responsive SP */
       .venn-titles {
         grid-template-columns: 1fr;
         gap: 10px;
         margin-top: 40px;
       }
-
       .venn-header {
         font-size: 1.5rem;
       }
-
       .venn-grid {
         grid-template-columns: 1fr;
         gap: 20px;
       }
-
       .v-mid-pill {
         width: 100%;
         height: auto;
         padding: 20px;
         margin: 10px 0;
       }
-
       .v-card {
         border-radius: 20px;
         padding: 20px;
       }
-
-      .v-connect-left,
-      .v-connect-right {
+      .v-connect-left, .v-connect-right {
         display: none;
       }
-
+      
       .v-summary-box i {
         display: none;
       }
@@ -2202,14 +2151,11 @@
         gap: 15px !important;
         justify-content: center !important;
       }
-
       .logo-link {
         width: 60px;
         height: 60px;
       }
-
-      .logo-link img,
-      .logo-link svg {
+      .logo-link img, .logo-link svg {
         width: 35px;
         height: 35px;
       }
@@ -2233,23 +2179,19 @@
       animation: shimmer 5s linear infinite;
       font-weight: 900;
     }
-
     /* Course List styles */
     .course-list {
       list-style: none;
       padding-left: 0;
     }
-
     .course-list li {
       margin-bottom: 12px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.03);
       padding-bottom: 10px;
     }
-
     .course-list li:last-child {
       border-bottom: none;
     }
-
     .course-list a {
       color: var(--blue);
       text-decoration: none;
@@ -2260,18 +2202,15 @@
       justify-content: space-between;
       transition: 0.2s ease;
     }
-
     .course-list a:hover {
       color: var(--green);
       text-decoration: underline;
       padding-left: 8px;
     }
-
     .course-list a i {
       font-size: 0.7rem;
       opacity: 0.4;
     }
-
     .highlight-item {
       background: rgba(5, 150, 105, 0.08) !important;
       border-radius: 15px;
@@ -2280,16 +2219,13 @@
       margin-top: 15px;
       transition: 0.3s;
     }
-
     .highlight-item:hover {
       background: rgba(5, 150, 105, 0.15) !important;
       transform: scale(1.02);
     }
-
     .highlight-item a {
       color: var(--green) !important;
     }
-
     .highlight-item a i {
       color: #fbbf24 !important;
       opacity: 1 !important;
@@ -2329,6 +2265,11 @@
 
     <!-- Group controls for mobile alignment -->
     <div class="nav-controls">
+      <div class="lang-switcher">
+        <a href="AI-Basics-for-bekiers_vn.html" class="lang-btn active">VN</a>
+        <a href="AI-Basics-for-bekiers_jp.html" class="lang-btn">JP</a>
+      </div>
+
       <button id="themeToggle" class="theme-toggle" title="Chuyển chế độ Sáng/Tối">
         <i class="fas fa-moon"></i>
       </button>
@@ -2636,8 +2577,7 @@
       <div class="v-summary-box"
         style="margin-top: 20px; padding: 25px 40px; border-radius: 20px; width: 100%; max-width: 1220px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 30px; margin-left: auto; margin-right: auto; color: var(--text);">
         <i class="far fa-lightbulb" style="font-size: 2.2rem; color: var(--blue);"></i>
-        <div class="v-summary-text"
-          style="font-size: 1.4rem; line-height: 1.6; text-align: center; flex-grow: 1; color: inherit;">
+        <div class="v-summary-text" style="font-size: 1.4rem; line-height: 1.6; text-align: center; flex-grow: 1; color: inherit;">
           Không có một mô hình nào <b class="blue">“tốt nhất cho mọi trường hợp”</b>, mà giá trị của AI nằm ở việc <br>
           <b class="green">sử dụng đúng công cụ cho đúng nhu cầu</b>.
         </div>
@@ -2658,25 +2598,19 @@
           border: 1px solid var(--border);
           text-decoration: none;
         }
-
         .logo-link:hover {
           transform: translateY(-10px) scale(1.1);
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 15px 35px rgba(0,0,0,0.2);
           border-color: var(--blue);
         }
-
-        .logo-link img,
-        .logo-link svg {
+        .logo-link img, .logo-link svg {
           width: 50px;
           height: 50px;
           object-fit: contain;
         }
       </style>
-      <p
-        style="text-align: center; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; margin-top: 40px; margin-bottom: -30px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8;">
-        Các tool AI phổ biến</p>
-      <div class="model-logos"
-        style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 60px; width: 100%; max-width: 100%; margin-left: auto; margin-right: auto; padding-bottom: 80px; flex-wrap: wrap;">
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; margin-top: 40px; margin-bottom: -30px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8;">Các tool AI phổ biến</p>
+      <div class="model-logos" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 60px; width: 100%; max-width: 100%; margin-left: auto; margin-right: auto; padding-bottom: 80px; flex-wrap: wrap;">
         <!-- Antigravity -->
         <a href="#" class="logo-link" title="Antigravity">
           <img src="Antigravity.png" alt="Antigravity">
@@ -3998,15 +3932,12 @@
                   border-collapse: collapse !important;
                   font-size: 0.85rem !important;
                 }
-
-                .qa-test-table th,
-                .qa-test-table td {
+                .qa-test-table th, .qa-test-table td {
                   padding: 15px !important;
                   line-height: 1.5 !important;
                   word-wrap: break-word !important;
                   vertical-align: middle !important;
                 }
-
                 .qa-test-table th {
                   background: rgba(30, 41, 59, 0.8) !important;
                   color: var(--white) !important;
@@ -4181,23 +4112,19 @@
                   border-collapse: collapse !important;
                   font-size: 0.85rem !important;
                 }
-
-                .user-story-table th,
-                .user-story-table td {
+                .user-story-table th, .user-story-table td {
                   padding: 12px !important;
                   line-height: 1.5 !important;
                   word-wrap: break-word !important;
                   vertical-align: top !important;
                   text-align: left !important;
                 }
-
                 .user-story-table th {
                   background: rgba(30, 41, 59, 0.8) !important;
                   color: var(--white) !important;
                   text-transform: uppercase !important;
                   letter-spacing: 1px !important;
                 }
-
                 .user-story-table .col-id {
                   width: 45px !important;
                   text-align: center !important;
@@ -4726,9 +4653,7 @@
               table-layout: fixed !important;
               border-collapse: collapse !important;
             }
-
-            .security-table th,
-            .security-table td {
+            .security-table th, .security-table td {
               padding: 20px !important;
               line-height: 1.6 !important;
               word-wrap: break-word !important;
@@ -4889,21 +4814,16 @@
         <!-- Claude & Anthropic -->
         <div class="align-card">
           <div class="card-title" style="flex-direction: column; align-items: flex-start; gap: 5px;">
-            <span
-              style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800;">Hệ
-              sinh thái Claude</span>
+            <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800;">Hệ sinh thái Claude</span>
             <div style="display: flex; align-items: center; gap: 10px; color: var(--blue); font-size: 1.1rem;">
               <i class="fas fa-brain"></i> Claude & Anthropic
             </div>
           </div>
           <div class="card-content">
             <ul class="course-list">
-              <li><a href="https://anthropic.skilljar.com/claude-101" target="_blank">Claude 101 (Official) <i
-                    class="fas fa-chevron-right"></i></a></li>
-              <li><a href="https://claude.com/resources/courses" target="_blank">Claude Resources Courses <i
-                    class="fas fa-chevron-right"></i></a></li>
-              <li><a href="https://www.anthropic.com/learn" target="_blank">Anthropic Learn Center <i
-                    class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://anthropic.skilljar.com/claude-101" target="_blank">Claude 101 (Official) <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://claude.com/resources/courses" target="_blank">Claude Resources Courses <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://www.anthropic.com/learn" target="_blank">Anthropic Learn Center <i class="fas fa-chevron-right"></i></a></li>
             </ul>
           </div>
         </div>
@@ -4911,21 +4831,16 @@
         <!-- AI Fundamentals -->
         <div class="align-card blue">
           <div class="card-title" style="flex-direction: column; align-items: flex-start; gap: 5px;">
-            <span
-              style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800;">Kiến
-              thức nền tảng</span>
+            <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800;">Kiến thức nền tảng</span>
             <div style="display: flex; align-items: center; gap: 10px; color: var(--blue); font-size: 1.1rem;">
               <i class="fas fa-globe"></i> AI Fundamentals
             </div>
           </div>
           <div class="card-content">
             <ul class="course-list">
-              <li><a href="https://imp.i384100.net/VOx2GR" target="_blank">AI for Everyone (Andrew Ng) <i
-                    class="fas fa-chevron-right"></i></a></li>
-              <li><a href="https://imp.i384100.net/1G9Zmg" target="_blank">Google AI Essentials <i
-                    class="fas fa-chevron-right"></i></a></li>
-              <li><a href="https://learn.microsoft.com/en-us/shows/generative-ai-for-beginners/"
-                  target="_blank">Generative AI for Beginners <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://imp.i384100.net/VOx2GR" target="_blank">AI for Everyone (Andrew Ng) <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://imp.i384100.net/1G9Zmg" target="_blank">Google AI Essentials <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://learn.microsoft.com/en-us/shows/generative-ai-for-beginners/" target="_blank">Generative AI for Beginners <i class="fas fa-chevron-right"></i></a></li>
             </ul>
           </div>
         </div>
@@ -4933,24 +4848,17 @@
         <!-- Specialized & Future AI -->
         <div class="align-card">
           <div class="card-title" style="flex-direction: column; align-items: flex-start; gap: 5px;">
-            <span
-              style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800;">Nâng
-              cao & Agent</span>
+            <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800;">Nâng cao & Agent</span>
             <div style="display: flex; align-items: center; gap: 10px; color: var(--blue); font-size: 1.1rem;">
               <i class="fas fa-robot"></i> Advanced AI & Agents
             </div>
           </div>
           <div class="card-content">
             <ul class="course-list">
-              <li><a href="https://academy.openai.com" target="_blank">OpenAI Prompt Engineering <i
-                    class="fas fa-chevron-right"></i></a></li>
-              <li><a href="https://learn.microsoft.com/en-us/shows/ai-agents-for-beginners/" target="_blank">AI Agents
-                  for Beginners <i class="fas fa-chevron-right"></i></a></li>
-              <li><a href="https://www.deeplearning.ai/short-courses/vibe-coding-101-with-cursor/" target="_blank">Vibe
-                  Coding 101 (Cursor) <i class="fas fa-chevron-right"></i></a></li>
-              <li class="highlight-item"><a
-                  href="https://anhtester.com/lesson/ai-test-automation-bai-1-con-duong-ung-dung-ai-trong-test-automation-hien-nay"
-                  target="_blank">AI in Test Automation (AnhTester) <i class="fas fa-star"></i></a></li>
+              <li><a href="https://academy.openai.com" target="_blank">OpenAI Prompt Engineering <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://learn.microsoft.com/en-us/shows/ai-agents-for-beginners/" target="_blank">AI Agents for Beginners <i class="fas fa-chevron-right"></i></a></li>
+              <li><a href="https://www.deeplearning.ai/short-courses/vibe-coding-101-with-cursor/" target="_blank">Vibe Coding 101 (Cursor) <i class="fas fa-chevron-right"></i></a></li>
+              <li class="highlight-item"><a href="https://anhtester.com/lesson/ai-test-automation-bai-1-con-duong-ung-dung-ai-trong-test-automation-hien-nay" target="_blank">AI in Test Automation (AnhTester) <i class="fas fa-star"></i></a></li>
             </ul>
           </div>
         </div>
@@ -4958,8 +4866,7 @@
     </section>
 
     <footer style="text-align: center; padding: 60px 0 40px; border-top: 1px solid var(--border); margin-top: 80px;">
-      <div class="nav-copyright"
-        style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; opacity: 0.6; letter-spacing: 0.5px;">
+      <div class="nav-copyright" style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; opacity: 0.6; letter-spacing: 0.5px;">
         © 2026 Bekisoft JSC. All rights reserved.
       </div>
     </footer>
