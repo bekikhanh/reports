@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理画面モックアップ - ブロック編集 (高度な拡張版)</title>
+    <style>
+        /* --- 共通スタイル --- */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+            background: #f5f7fa; color: #495057; font-size: 14px; line-height: 1.6;
+        }
+
+        /* ヘッダー */
+        .ec-admin-header {
+            background: #fff; border-bottom: 1px solid #e1e6eb; padding: 12px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .ec-admin-header__logo { font-weight: bold; font-size: 16px; color: #2c3e50; }
+
+        .ec-admin-layout { display: flex; min-height: calc(100vh - 49px); }
+
+        /* サイドバー (元のファイルと同様) */
+        .ec-admin-sidebar { width: 220px; background: #2c3e50; color: #cbd6e0; padding: 16px 0; flex-shrink: 0; }
+        .ec-admin-sidebar__group { margin-bottom: 16px; }
+        .ec-admin-sidebar__title { padding: 8px 20px; font-size: 11px; color: #8da4b8; text-transform: uppercase; }
+        .ec-admin-sidebar__item { padding: 8px 20px; cursor: pointer; font-size: 13px; }
+        .ec-admin-sidebar__item:hover { background: #34495e; }
+        .ec-admin-sidebar__item.is-active { background: #3498db; color: #fff; font-weight: bold; }
+
+        /* メn */
+        .ec-admin-main { flex: 1; padding: 24px 32px; }
+        .ec-admin-pageTitle { font-size: 22px; font-weight: 600; color: #2c3e50; margin: 8px 0 24px; }
+
+        /* カード */
+        .ec-admin-card { background: #fff; border: 1px solid #e1e6eb; border-radius: 6px; margin-bottom: 16px; overflow: hidden; }
+        .ec-admin-card__header { padding: 14px 20px; background: #f9fafb; border-bottom: 1px solid #e1e6eb; font-weight: 600; }
+        .ec-admin-card__body { padding: 24px; }
+
+        /* フォーム */
+        .ec-form-row { display: flex; gap: 24px; margin-bottom: 24px; align-items: flex-start; }
+        .ec-form-label { width: 180px; font-weight: 600; color: #495057; padding-top: 8px; flex-shrink: 0; }
+        .ec-form-label__required { color: #e74c3c; font-size: 11px; margin-left: 4px; }
+        .ec-form-input { flex: 1; }
+        .ec-form-input input[type="text"], .ec-form-input input[type="number"], .ec-form-input input[type="datetime-local"], .ec-form-input textarea {
+            width: 100%; max-width: 480px; padding: 8px 12px; border: 1px solid #d1d6db; border-radius: 4px; font-size: 13px;
+        }
+        .ec-form-help { font-size: 12px; color: #999; margin-top: 4px; }
+        .ec-radio { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-right: 24px; }
+
+        /* 特殊エリア */
+        .toggle-container {
+            background: #f0f7ff; padding: 15px; border-radius: 6px; border: 1px solid #3498db; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .toggle-container input { width: 18px; height: 18px; cursor: pointer; }
+        
+        .annotation { font-size: 12px; color: #8a6d3b; background: #fff8e7; padding: 10px; border-radius: 4px; border-left: 3px solid #f39c12; margin-top: 8px; }
+
+        /* 状態による表示制御 */
+        .new-structure-only { display: none; }
+        .old-structure-only { display: block; }
+
+        /* WYSIWYG Mock */
+        .wysiwyg-mock { border: 1px solid #d1d6db; border-radius: 4px; }
+        .wysiwyg-toolbar { background: #f8f9fa; border-bottom: 1px solid #d1d6db; padding: 8px; display: flex; gap: 5px; flex-wrap: wrap; }
+        .wysiwyg-btn { border: 1px solid #ddd; background: #fff; padding: 2px 8px; border-radius: 3px; font-size: 11px; }
+        .wysiwyg-content { height: 200px; background: #fff; padding: 15px; }
+
+        .ec-admin-actions { text-align: center; margin-top: 32px; }
+        .ec-admin-btn { padding: 10px 32px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; }
+        .ec-admin-btn--primary { background: #3498db; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="ec-admin-header">
+    <div class="ec-admin-header__logo">EC-CUBE 管理画面</div>
+    <div class="ec-admin-header__user">admin / ログイン中</div>
+</div>
+
+<div class="ec-admin-layout">
+    <aside class="ec-admin-sidebar">
+        <div class="ec-admin-sidebar__group">
+            <div class="ec-admin-sidebar__title">コンテンツ管理</div>
+            <div class="ec-admin-sidebar__item">レイアウト管理</div>
+            <div class="ec-admin-sidebar__item is-active">ブロック管理</div>
+            <div class="ec-admin-sidebar__item">ページ管理</div>
+            <div class="ec-admin-sidebar__item">新着情報管理</div>
+        </div>
+        <div class="ec-admin-sidebar__group">
+            <div class="ec-admin-sidebar__title">設定</div>
+            <div class="ec-admin-sidebar__item">店舗設定</div>
+        </div>
+    </aside>
+
+    <main class="ec-admin-main">
+        <h1 class="ec-admin-pageTitle">ブロック編集</h1>
+
+        <!-- 構造切り替えスイッチ -->
+        <div class="toggle-container">
+            <input type="checkbox" id="structure_toggle" onchange="updateUI()">
+            <label for="structure_toggle" style="font-weight: bold; cursor: pointer;">
+                プロモーション機能（高度な構成）を有効にする
+            </label>
+        </div>
+
+        <div class="ec-admin-card">
+            <div class="ec-admin-card__header">基本情報</div>
+            <div class="ec-admin-card__body">
+                
+                <div class="ec-form-row">
+                    <div class="ec-form-label">ブロック名 <span class="ec-form-label__required">必須</span></div>
+                    <div class="ec-form-input">
+                        <input type="text" value="プロモーションポップアップ">
+                        <div class="ec-form-help">管理画面の一覧で表示される名前。</div>
+                    </div>
+                </div>
+
+                <div class="ec-form-row">
+                    <div class="ec-form-label">ファイル名 <span class="ec-form-label__required">必須</span></div>
+                    <div class="ec-form-input">
+                        <input type="text" value="promotion_popup" id="filename_input">
+                        <div class="ec-form-help">テンプレートファイル名。</div>
+                    </div>
+                </div>
+
+                <!-- 新構成のみに表示される項目 -->
+                <div class="new-structure-only">
+                    <div class="ec-form-row">
+                        <div class="ec-form-label">表示する/しない</div>
+                        <div class="ec-form-input">
+                            <label class="ec-radio"><input type="radio" name="status" checked> 表示する</label>
+                            <label class="ec-radio"><input type="radio" name="status"> 表示しない</label>
+                        </div>
+                    </div>
+
+                    <div class="ec-form-row">
+                        <div class="ec-form-label">表示開始日時</div>
+                        <div class="ec-form-input">
+                            <input type="datetime-local" value="2026-05-10T09:00" style="max-width: 240px;">
+                        </div>
+                    </div>
+
+                    <div class="ec-form-row">
+                        <div class="ec-form-label">表示終了日時</div>
+                        <div class="ec-form-input">
+                            <input type="datetime-local" value="2026-05-20T23:59" style="max-width: 240px;">
+                            <div class="annotation">
+                                <strong>使い方の例：</strong><br>
+                                ・キャンペーン期間を入れて予約 → 期間外は自動で消える
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ec-form-row">
+                        <div class="ec-form-label">再表示までの日数</div>
+                        <div class="ec-form-input">
+                            <input type="number" value="1" style="max-width: 120px;"> 日
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 内容編集エリア -->
+        <div class="ec-admin-card">
+            <div class="ec-admin-card__header">
+                <span class="old-structure-only">コード (Twig/HTML)</span>
+                <span class="new-structure-only">表示内容（WYSIWYG編集）</span>
+            </div>
+            <div class="ec-admin-card__body">
+                
+                <!-- 旧構成：テキストエリア -->
+                <div class="old-structure-only">
+                    <textarea rows="15" style="font-family: monospace; background: #fafafa; border: 1px solid #d1d6db; width: 100%; border-radius: 4px; padding: 10px;"><div class="banner">
+    <a href="/sale">
+        <img src="/img/banner.jpg">
+    </a>
+</div></textarea>
+                </div>
+
+                <!-- 新構成：WYSIWYG Mock -->
+                <div class="new-structure-only">
+                    <div class="wysiwyg-mock">
+                        <div class="wysiwyg-toolbar">
+                            <button class="wysiwyg-btn">ファイル</button><button class="wysiwyg-btn">編集</button>
+                            <button class="wysiwyg-btn">挿入</button><button class="wysiwyg-btn"><b>B</b></button>
+                            <button class="wysiwyg-btn"><i>I</i></button><button class="wysiwyg-btn"><u>U</u></button>
+                            <button class="wysiwyg-btn">🖼</button><button class="wysiwyg-btn">🔗</button>
+                            <button class="wysiwyg-btn">&lt;/&gt;</button>
+                        </div>
+                        <div class="wysiwyg-content">
+                            <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; color: #999;">
+                                [WYSIWYG Preview: バナー画像やピックアップ商品がここに表示されます]
+                            </div>
+                        </div>
+                    </div>
+                    <div class="annotation">
+                        <strong>HTML直接編集も可能：</strong> 上の &lt;/&gt; ボタンでソースモードに切り替わります。
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ec-admin-actions">
+            <button class="ec-admin-btn ec-admin-btn--primary">登録する</button>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    function updateUI() {
+        const isAdvanced = document.getElementById('structure_toggle').checked;
+        const newItems = document.querySelectorAll('.new-structure-only');
+        const oldItems = document.querySelectorAll('.old-structure-only');
+        const filename = document.getElementById('filename_input');
+
+        if (isAdvanced) {
+            newItems.forEach(el => el.style.display = 'block');
+            oldItems.forEach(el => el.style.display = 'none');
+            filename.disabled = true;
+            filename.style.background = "#f5f5f5";
+        } else {
+            newItems.forEach(el => el.style.display = 'none');
+            oldItems.forEach(el => el.style.display = 'block');
+            filename.disabled = false;
+            filename.style.background = "#fff";
+        }
+    }
+</script>
+
+</body>
+</html>
