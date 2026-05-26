@@ -6,31 +6,30 @@
 ---
 
 ### I. TỔNG QUAN SỰ CỐ (EXECUTIVE SUMMARY)
-Vào lúc **13:49 ngày 21/05/2026**, thông qua việc phân tích nhật ký truy cập (access log), đội ngũ kỹ thuật đã phát hiện một chuỗi sự cố bảo mật cực kỳ nghiêm trọng liên quan đến việc rò rỉ các tệp cấu hình nhạy cảm (`.env`, `.git`) và tệp nhật ký hệ thống chứa dữ liệu nhạy cảm (`laravel.log`). Cuộc điều tra sâu hơn cho thấy hệ thống đã bị xâm nhập từ trước và bị cài đặt **mã độc duy trì sự hiện diện (malware persistence)** trên máy chủ Production. 
+- Thời điểm phát hiện: 13:49 ngày 21/05/2026, qua phân tích access‑log.
+- Mô tả sự cố: Rò rỉ các tệp cấu hình nhạy cảm (.env, .git) và log hệ thống (laravel.log); đồng thời phát hiện malware persistence trên server Production.
+- Trạng thái hiện tại: Mã độc tạm thời không hoạt động; các chỉ số CPU, RAM, mạng bình thường. Các file nhạy cảm đã được chặn truy cập công khai từ 20/05/2026.
+- Mối nguy cấp bách: Thông tin cá nhân và khóa bí mật đã bị rò rỉ, cần khắc phục nhanh để bảo vệ dữ liệu khách hàng và khôi phục niềm tin của client. 
 
-Hiện tại, mã độc tạm thời không hoạt động (các chỉ số tài nguyên CPU, RAM, kết nối mạng bình thường). Hệ thống đã bước đầu được chặn truy cập public vào các file nhạy cảm từ ngày 20/05/2026. Tuy nhiên, do các khóa bảo mật và thông tin cá nhân của người dùng đã bị rò rỉ từ trước, việc thực hiện các biện pháp khắc phục toàn diện và triệt để là **cực kỳ cấp thiết** để bảo vệ an toàn thông tin, bảo vệ dữ liệu khách hàng và khôi phục sự an tâm cho Client.
+
 
 ---
 
 ### II. PHÂN TÍCH NGUYÊN NHÂN DẪN ĐẾN SỰ CỐ (ROOT CAUSE ANALYSIS)
-Từ kết quả điều tra chi tiết ngày 25/05/2026, ban dự án xác định chuỗi sự cố nghiêm trọng này bắt nguồn từ sự kết hợp của cả yếu tố kỹ thuật, quy trình vận hành và con người khi thực hiện nâng cấp hệ thống:
 
-#### 1. Sự cố rò rỉ dữ liệu lịch sử (laravel.log 7.2GB) sang máy chủ mới
-* **Quy trình di chuyển dữ liệu (Migration) thiếu dọn dẹp:** Khi thực hiện nâng cấp hệ thống (renewal) và chuyển máy chủ, đội ngũ đã thực hiện sao chép nguyên trạng toàn bộ thư mục dự án (bao gồm cả thư mục lưu trữ log cục bộ `storage/logs/` chứa file log cũ tích lũy từ tháng 10/2022) từ máy chủ XSERVER cũ sang máy chủ mới.
-* **Thiếu bước rà soát dữ liệu nhạy cảm (Cleanup):** Dự án thiếu bước kiểm tra an toàn và dọn dẹp các tệp tin lưu trữ thừa (logs, backups, zip files) trước khi đưa mã nguồn lên môi trường Production thực tế.
+Dựa trên điều tra chi tiết ngày 25/05/2026, nguyên nhân gây ra chuỗi sự cố được tổng hợp vào ba nhóm chính:
 
-#### 2. Nguyên nhân kỹ thuật dẫn đến việc thiết lập bảo mật yếu trên máy chủ mới
-* **Quy trình chuyển đổi công nghệ (Apache sang Nginx) thiếu chuẩn hóa:**
-  * Hệ thống cũ chạy trên Apache (Sử dụng tệp cấu hình phân tán `.htaccess` của Laravel để tự động kích hoạt các quy tắc chặn truy cập file ẩn và logs hệ thống).
-  * Khi chuyển sang máy chủ Nginx mới (nhằm mục đích tăng hiệu năng, tối ưu RAM & CPU), Nginx không hỗ trợ cơ chế `.htaccess`. Mọi quy tắc chặn bắt buộc phải cấu hình thủ công trong Virtual Host của Nginx.
-  * Đội ngũ triển khai đã bỏ sót việc cấu hình chuyển đổi các quy tắc chặn bảo vệ tương ứng sang Nginx Virtual Host config. Do đó, Nginx hoàn toàn thiếu các block rules để bảo vệ các thư mục và file cấu hình nhạy cảm.
-* **Đặc thù cấu trúc dự án không chuẩn (Anti-pattern):**
-  * Theo chuẩn Laravel, thư mục chạy công khai (Document Root) bắt buộc phải trỏ vào `/public` để cô lập mã nguồn.
-  * Tuy nhiên, dự án này lại đặt file đầu vào `index.php` ở ngay project root (thư mục gốc). Thiết kế phản chuẩn này biến toàn bộ mã nguồn bên ngoài (như `.env`, thư mục `.git/`, tệp tin nhật ký `storage/logs/`) thành tài nguyên tĩnh có thể truy cập tự do từ internet nếu không được cấu hình chặn thủ công ở tầng Web Server.
+1. **Rò rỉ dữ liệu khi di chuyển hệ thống**
+   - *Quy trình Migration không dọn dẹp*: Sao chép toàn bộ thư mục dự án, bao gồm `storage/logs/` chứa log lịch sử (từ 10/2022), sang máy chủ mới.
+   - *Thiếu bước Cleanup*: Không rà soát, xóa các file log, backup, zip nhạy cảm trước khi đưa mã nguồn lên Production.
 
-#### 3. Thiếu sót về quy trình và năng lực con người
-* **Quy trình triển khai thiếu Checklist chuẩn:** Doanh nghiệp chưa ban hành tài liệu Checklist an toàn thông tin khi deploy ứng dụng Laravel trên môi trường Nginx, cũng như quy trình đánh giá và rà soát bảo mật trước khi Golive.
-* **Kỹ năng vận hành của nhân sự:** Nhân sự thiết lập máy chủ thiếu kinh nghiệm triển khai Laravel trên Nginx với cấu trúc non-standard, thiếu cẩn trọng trong việc kiểm thử an toàn thực tế sau khi cấu hình.
+2. **Lỗ hổng kỹ thuật khi triển khai môi trường mới**
+   - *Chuyển đổi Apache → Nginx chưa chuẩn*: `.htaccess` trên Apache không được chuyển sang cấu hình Nginx, dẫn tới việc bỏ qua các rule chặn file ẩn và log.
+   - *Cấu trúc dự án không chuẩn*: `index.php` đặt ở thư mục gốc thay vì `/public`, khiến `.env`, `.git`, `storage/logs/` trở thành tài nguyên tĩnh có thể truy cập công khai.
+
+3. **Thiếu sót về quy trình và năng lực con người**
+   - *Không có Checklist bảo mật*: Không có tài liệu kiểm tra an toàn khi deploy Laravel trên Nginx, và không có quy trình rà soát bảo mật trước Go‑live.
+   - *Kỹ năng vận hành hạn chế*: Nhân sự thiếu kinh nghiệm cấu hình Laravel/Nginx và không thực hiện kiểm thử an toàn thực tế sau khi cấu hình.
 
 ---
 
