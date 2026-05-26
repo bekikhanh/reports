@@ -20,16 +20,19 @@
 Dựa trên điều tra chi tiết ngày 25/05/2026, nguyên nhân gây ra chuỗi sự cố được tổng hợp vào ba nhóm chính:
 
 1. **Rò rỉ dữ liệu khi di chuyển hệ thống**
-   - *Quy trình Migration không dọn dẹp*: Sao chép toàn bộ thư mục dự án, bao gồm `storage/logs/` chứa log lịch sử (từ 10/2022), sang máy chủ mới.
+   - *Quy trình Migration không dọn dẹp*: Sao chép toàn bộ thư mục dự án, bao gồm `storage/logs/` chứa log lịch sử (từ 10/2022), sang máy chủ mới. *Thông thường khi chuyển server sẽ copy toàn bộ dữ liệu từ server cũ sang.*
    - *Thiếu bước Cleanup*: Không rà soát, xóa các file log, backup, zip nhạy cảm trước khi đưa mã nguồn lên Production.
 
 2. **Lỗ hổng kỹ thuật khi triển khai môi trường mới**
-   - *Chuyển đổi Apache → Nginx chưa chuẩn*: `.htaccess` trên Apache không được chuyển sang cấu hình Nginx, dẫn tới việc bỏ qua các rule chặn file ẩn và log.
+   - *Chuyển đổi Apache → Nginx chưa chuẩn*: Cả `.htaccess` trên Apache trên hệ thống cũ và cấu hình Nginx trên hệ thống mới đều bỏ qua các rule chặn file ẩn và log.(Không cấu hình, dẫn đến hệ thống dễ bị tấn công)
+
    - *Cấu trúc dự án không chuẩn*: `index.php` đặt ở thư mục gốc thay vì `/public`, khiến `.env`, `.git`, `storage/logs/` trở thành tài nguyên tĩnh có thể truy cập công khai.
 
+  
+
 3. **Thiếu sót về quy trình và năng lực con người**
-   - *Không có Checklist bảo mật*: Không có tài liệu kiểm tra an toàn khi deploy Laravel trên Nginx, và không có quy trình rà soát bảo mật trước Go‑live.
-   - *Kỹ năng vận hành hạn chế*: Nhân sự thiếu kinh nghiệm cấu hình Laravel/Nginx và không thực hiện kiểm thử an toàn thực tế sau khi cấu hình.
+   - *Không có Checklist bảo mật*: Không có tài liệu kiểm tra an toàn khi deploy Laravel trên Nginx, và không có quy trình rà soát bảo mật trước Go‑live.(Hệ thống cũ cũng đã bị vấn đề tương tự và chưa được giải quyết)
+   - *Kỹ năng vận hành hạn chế*: Nhân sự khi cấu hình Laravel/Nginx đã dựa trên tiêu chuẩn bảo mật của hệ thống cũ và không thực hiện kiểm thử an toàn thực tế sau khi cấu hình.
 
 ---
 
@@ -43,6 +46,7 @@ Dựa trên điều tra chi tiết ngày 25/05/2026, nguyên nhân gây ra chu�
   * Rò rỉ thông tin xác thực cơ sở dữ liệu (`DB_USERNAME`, `DB_PASSWORD`).
   * Rò rỉ khóa kết nối Google API (`GOOGLE_CLIENT_SECRET`, Google Refresh Token).
   * Lộ toàn bộ mã nguồn (Source Code) và lịch sử phát triển thông qua thư mục quản lý phiên bản `.git`.
+  ※ Hệ thống cũ cũng phát sinh vấn đề tương tự.
 * **Risk tiềm ẩn (Rủi ro)**: 
   * Kẻ tấn công có thể giải mã session/cookie của người dùng để giả mạo phiên đăng nhập của bất kỳ ai.
   * Sử dụng thông tin đăng nhập database để truy cập trực tiếp vào cơ sở dữ liệu nhằm đánh cắp, sửa đổi hoặc xóa sạch dữ liệu (tấn công Ransomware tống tiền).
@@ -66,6 +70,7 @@ Dựa trên điều tra chi tiết ngày 25/05/2026, nguyên nhân gây ra chu�
   * Xác định có **474 MB dữ liệu log (~6.6% dung lượng)** đã bị tải xuống thành công bởi một IP botnet lạ (`212.86.126.157`) vào ngày 05/04/2026.
   * **34 người dùng bị ảnh hưởng trực tiếp**, trong đó bao gồm: **28 Quản trị viên cửa hàng (role=2)**, **5 Hội viên thường (role=1)**, **1 Quản trị viên vận hành (role=4)**, **1 Tài khoản thử nghiệm (không xử lý)**.
   * Thông tin bị rò rỉ: Họ tên, địa chỉ email, mật khẩu đã được băm (bcrypt), một phần số điện thoại, và trạng thái tài khoản. *Nguyên nhân lưu thông tin:* Do thiết kế của Laravel tự động lưu các giá trị truy vấn (bind values) kèm theo khi xảy ra các ngoại lệ SQL (SQL Exceptions).
+  ※ Hệ thống cũ cũng phát sinh vấn đề tương tự.
 * **Risk tiềm ẩn (Rủi ro)**:
   * Kẻ tấn công có thể sử dụng các máy tính hiệu năng cao hoặc các công cụ bẻ khóa mật khẩu (hashcat) để giải mã mật khẩu bcrypt đối với các tài khoản đặt mật khẩu yếu (tấn công từ điển).
   * Do phần lớn người dùng bị ảnh hưởng chưa thay đổi mật khẩu sau thời điểm rò rỉ, nguy cơ cao các mật khẩu bcrypt bị lộ trùng khớp với mật khẩu đang sử dụng hiện tại.
@@ -102,6 +107,7 @@ Dựa trên điều tra chi tiết ngày 25/05/2026, nguyên nhân gây ra chu�
 * **Tình trạng an toàn cơ sở dữ liệu hiện tại:**
   * Không phát hiện tài khoản backdoor đáng ngờ nào trong cơ sở dữ liệu (chỉ có root, gbaito và các tài khoản hệ thống chuẩn).
   * Tài khoản `root` của MySQL sử dụng xác thực `auth_socket` (không sử dụng mật khẩu truy cập ngoài), loại bỏ rủi ro bị rò rỉ mật khẩu root DB.
+  ※ Hệ thống cũ cũng phát sinh vấn đề tương tự.
 * **Risk tiềm ẩn (Rủi ro)**:
   * Kẻ tấn công sở hữu quyền kiểm soát sâu hệ thống ở mức hệ điều hành cao nhất dưới quyền user web `www`.
   * **Các hoạt động chưa xác định:** Trong khoảng **6 tuần hoạt động active (27/01 đến 12/03/2026)** của mã độc, chưa thể xác định hành vi của kẻ tấn công. Rủi ro cao bao gồm:
