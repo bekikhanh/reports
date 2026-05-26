@@ -123,41 +123,19 @@ Dựa trên báo cáo đánh giá tính khả thi và sự cố thực tế, ban
 
 #### 1. Bảng chi tiết các Task cần triển khai
 
-| ID | Hạng mục & Tên công việc | Phương án triển khai chi tiết (Dev) | Mục tiêu & Lợi ích mang lại | Trạng thái |
-| :---: | :--- | :--- | :--- | :---: |
-| **1.1** | **Giám sát**: Phát hiện truy cập bất thường | Cài đặt `fail2ban` quét log Nginx tự động chặn các IP dò quét khả nghi và cảnh báo qua Slack/Telegram. | Ngăn chặn bots, dò quét tự động và brute force. | Chưa thực hiện |
-| **1.2** | **Giám sát**: Kiểm tra định kỳ tải server & logs | Tạo cronjob chạy script phân tích logs hàng ngày kết hợp Zabbix/Grafana theo dõi tài nguyên. | Phát hiện sớm DDoS nhỏ, botnet hoặc sự cố treo hệ thống. | Chưa thực hiện |
-| **2.1** | **Máy chủ**: Quét file đáng ngờ định kỳ | Cấu hình `Maldet` + `ClamAV` quét tự động các thư mục `/var/tmp/`, `/tmp/`, `storage/` hàng đêm. | Phát hiện và cách ly sớm webshell, backdoor độc hại. | Chưa thực hiện |
-| **2.2** | **Máy chủ**: Vô hiệu hóa password SSH | Cấu hình `PasswordAuthentication no` trong sshd daemon. Sử dụng SSH Key cá nhân để đăng nhập. | Chặn 100% tấn công Brute Force mật khẩu cổng 22. | 🟢 Đã thực hiện |
-| **2.3** | **Máy chủ**: Tối ưu cấu hình Nginx | Cấu hình rule chặn các file nhạy cảm (`.env`, `.git`, `.log`) và cấu hình Rate Limiting. | Ngăn rò rỉ dữ liệu tĩnh và giảm thiểu spam request. | 🟢 Đã thực hiện |
-| **3.1** | **Quyền hạn**: Đặc quyền tối thiểu Database | Thu hồi quyền dư thừa (SUPER, FILE) của user `gbaito`. Chỉ GRANT quyền cơ bản (SELECT, INSERT, UPDATE, DELETE, INDEX). | Giảm thiểu thiệt hại tối đa nếu lộ thông tin kết nối DB. | Chưa thực hiện |
-| **3.2** | **Quyền hạn**: Chính sách xác thực SSH | Tách biệt SSH Key từng nhân sự. Tiến hành kiểm tra và dọn dẹp `authorized_keys` định kỳ hàng tháng. | Loại bỏ rủi ro kiểm soát nội bộ, đảm bảo thu hồi quyền khi off-boarding. | 🟢 Đã thực hiện |
-| **4.1** | **Ứng dụng**: Chuyển Document Root sang `/public` | Di chuyển file `index.php` vào thư mục `/public` và cấu hình Nginx trỏ Document Root trực tiếp vào đó. | Cô lập hoàn toàn mã nguồn gốc Laravel khỏi Internet. | Chưa thực hiện |
-| **4.2** | **Ứng dụng**: Sanitize log Exception Handler | Can thiệp Exception Handler (`Handler.php`) bổ sung logic che giấu dữ liệu nhạy cảm trước khi ghi log. | Bảo vệ thông tin khách hàng khỏi rò rỉ khi gặp SQL Exception. | Chưa thực hiện |
-| **4.3** | **Ứng dụng**: Duy trì log rotation | Duy trì cấu hình `LOG_CHANNEL=daily` (giữ 14 ngày) và cấu hình `logrotate` hệ thống cho log Nginx. | Tiết kiệm dung lượng đĩa, giảm thiểu lượng log rò rỉ tối đa. | 🟢 Đã thực hiện |
-| **4.4** | **Ứng dụng**: Chuẩn hóa cấu hình môi trường | Tắt chế độ `APP_DEBUG` trên Production, dọn dẹp key thừa và phân quyền an toàn `chmod 600` cho file `.env`. | Tăng tính ổn định và bảo mật tối đa cho dữ liệu môi trường. | 🟡 Đang thực hiện |
-
----
-
-#### 2. Kế hoạch & Tiến độ triển khai chi tiết (Gantt Schedule)
-
-Dưới đây là lịch trình phân bổ công việc chi tiết từ ngày 26/05 đến ngày 04/06:
-
-| Task ID | Hạng mục công việc | 26/05 | 27/05 | 28/05 | 29/05 | 01/06 | 02/06 | 03/06 | 04/06 | Trạng thái hiện tại |
-| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **1.1** | Triển khai phát hiện truy cập bất thường | **X** | **X** | | | | | | | Chưa thực hiện |
-| **1.2** | Kiểm tra định kỳ tải server & log | | | **X** | **X** | | | | | Chưa thực hiện |
-| **2.1** | Quét file đáng ngờ định kỳ (`Maldet`) | | | **X** | **X** | | | | | Chưa thực hiện |
-| **2.2** | Vô hiệu hóa xác thực mật khẩu SSH | **-** | | | | | | | | 🟢 **Đã thực hiện** |
-| **2.3** | Tối ưu hóa cấu hình máy chủ Nginx | **-** | | | | | | | | 🟢 **Đã thực hiện** |
-| **3.1** | Áp dụng đặc quyền tối thiểu DB | **X** | **X** | | | | | | | Chưa thực hiện |
-| **3.2** | Thiết lập chính sách xác thực SSH | **-** | | | | | | | | 🟢 **Đã thực hiện** |
-| **4.1** | Chuyển Document Root sang `/public` | | | | | **X** | **X** | **X** | | Chưa thực hiện |
-| **4.2** | Sanitize log Exception Handler | | | | | **X** | **X** | | | Chưa thực hiện |
-| **4.3** | Duy trì log rotation | **-** | | | | | | | | 🟢 **Đã thực hiện** |
-| **4.4** | Chuẩn hóa cấu hình môi trường `.env` | **X** | | | | | | | | 🟡 **Đang thực hiện** |
-
-*Ghi chú: Ký hiệu **X** biểu thị ngày làm việc, **-** biểu thị công việc đã hoàn thành trước đó.*
+| ID | Hạng mục & Tên công việc | Phương án triển khai chi tiết (Dev) | Mục tiêu & Lợi ích mang lại | Schedule | Trạng thái |
+| :---: | :--- | :--- | :--- | :--- | :---: |
+| **1.1** | **Giám sát**: Phát hiện truy cập bất thường | Cài đặt `fail2ban` quét log Nginx tự động chặn các IP dò quét khả nghi và cảnh báo qua Slack/Telegram. | Ngăn chặn bots, dò quét tự động và brute force. |  | Chưa thực hiện |
+| **1.2** | **Giám sát**: Kiểm tra định kỳ tải server & logs | Tạo cronjob chạy script phân tích logs hàng ngày kết hợp Zabbix/Grafana theo dõi tài nguyên. | Phát hiện sớm DDoS nhỏ, botnet hoặc sự cố treo hệ thống. |  | Chưa thực hiện |
+| **2.1** | **Máy chủ**: Quét file đáng ngờ định kỳ | Cấu hình `Maldet` + `ClamAV` quét tự động các thư mục `/var/tmp/`, `/tmp/`, `storage/` hàng đêm. | Phát hiện và cách ly sớm webshell, backdoor độc hại. |  | Chưa thực hiện |
+| **2.2** | **Máy chủ**: Vô hiệu hóa password SSH | Cấu hình `PasswordAuthentication no` trong sshd daemon. Sử dụng SSH Key cá nhân để đăng nhập. | Chặn 100% tấn công Brute Force mật khẩu cổng 22. |  | 🟢 Đã thực hiện |
+| **2.3** | **Máy chủ**: Tối ưu cấu hình Nginx | Cấu hình rule chặn các file nhạy cảm (`.env`, `.git`, `.log`) và cấu hình Rate Limiting. | Ngăn rò rỉ dữ liệu tĩnh và giảm thiểu spam request. |  | 🟢 Đã thực hiện |
+| **3.1** | **Quyền hạn**: Đặc quyền tối thiểu Database | Thu hồi quyền dư thừa (SUPER, FILE) của user `gbaito`. Chỉ GRANT quyền cơ bản (SELECT, INSERT, UPDATE, DELETE, INDEX). | Giảm thiểu thiệt hại tối đa nếu lộ thông tin kết nối DB. |  | Chưa thực hiện |
+| **3.2** | **Quyền hạn**: Chính sách xác thực SSH | Tách biệt SSH Key từng nhân sự. Tiến hành kiểm tra và dọn dẹp `authorized_keys` định kỳ hàng tháng. | Loại bỏ rủi ro kiểm soát nội bộ, đảm bảo thu hồi quyền khi off-boarding. |  | 🟢 Đã thực hiện |
+| **4.1** | **Ứng dụng**: Chuyển Document Root sang `/public` | Di chuyển file `index.php` vào thư mục `/public` và cấu hình Nginx trỏ Document Root trực tiếp vào đó. | Cô lập hoàn toàn mã nguồn gốc Laravel khỏi Internet. |  | Chưa thực hiện |
+| **4.2** | **Ứng dụng**: Sanitize log Exception Handler | Can thiệp Exception Handler (`Handler.php`) bổ sung logic che giấu dữ liệu nhạy cảm trước khi ghi log. | Bảo vệ thông tin khách hàng khỏi rò rỉ khi gặp SQL Exception. |  | Chưa thực hiện |
+| **4.3** | **Ứng dụng**: Duy trì log rotation | Duy trì cấu hình `LOG_CHANNEL=daily` (giữ 14 ngày) và cấu hình `logrotate` hệ thống cho log Nginx. | Tiết kiệm dung lượng đĩa, giảm thiểu lượng log rò rỉ tối đa. |  | 🟢 Đã thực hiện |
+| **4.4** | **Ứng dụng**: Chuẩn hóa cấu hình môi trường | Tắt chế độ `APP_DEBUG` trên Production, dọn dẹp key thừa và phân quyền an toàn `chmod 600` cho file `.env`. | Tăng tính ổn định và bảo mật tối đa cho dữ liệu môi trường. |  | 🟡 Đang thực hiện |
 
 ---
 
